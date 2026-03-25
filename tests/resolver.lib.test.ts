@@ -13,10 +13,10 @@ describe("resolveConfig", () => {
   it("should resolve astro", () => {
     expect(resolveConfig(["astro"])).toEqual({
       template: "astro",
-      features: ["wrangler"],
+      features: ["biome", "wrangler"],
       dependencies: {
         default: ["astro"],
-        dev: ["@gameroman/config", "typescript", "wrangler"],
+        dev: ["@biomejs/biome", "@gameroman/config", "typescript", "wrangler"],
       },
     });
   });
@@ -24,10 +24,11 @@ describe("resolveConfig", () => {
   it("should resolve astro tailwind", () => {
     expect(resolveConfig(["astro", "tailwind"])).toEqual({
       template: "astro",
-      features: ["tailwind", "wrangler"],
+      features: ["biome", "tailwind", "wrangler"],
       dependencies: {
         default: ["astro", "tailwindcss"],
         dev: [
+          "@biomejs/biome",
           "@gameroman/config",
           "@tailwindcss/vite",
           "typescript",
@@ -37,26 +38,34 @@ describe("resolveConfig", () => {
     });
   });
 
-  it("should resolve astro biome", () => {
-    expect(resolveConfig(["astro", "biome"])).toEqual({
+  it("should resolve astro solid", () => {
+    expect(resolveConfig(["astro", "solid"])).toEqual({
       template: "astro",
-      features: ["biome", "wrangler"],
+      features: ["biome", "solid", "wrangler"],
       dependencies: {
-        default: ["astro"],
-        dev: ["@biomejs/biome", "@gameroman/config", "typescript", "wrangler"],
+        default: ["astro", "solid-js"],
+        dev: [
+          "@astrojs/solid-js",
+          "@biomejs/biome",
+          "@gameroman/config",
+          "typescript",
+          "wrangler",
+        ],
       },
     });
   });
 
   it("should resolve astro solid", () => {
-    expect(resolveConfig(["astro", "solid"])).toEqual({
+    expect(resolveConfig(["astro", "solid", "tailwind"])).toEqual({
       template: "astro",
-      features: ["solid", "wrangler"],
+      features: ["biome", "solid", "tailwind", "wrangler"],
       dependencies: {
-        default: ["astro", "solid-js"],
+        default: ["astro", "solid-js", "tailwindcss"],
         dev: [
           "@astrojs/solid-js",
+          "@biomejs/biome",
           "@gameroman/config",
+          "@tailwindcss/vite",
           "typescript",
           "wrangler",
         ],

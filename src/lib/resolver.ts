@@ -22,13 +22,12 @@ function resolveConfig(args: string[]): ResolvedConfig {
   for (const arg of args) {
     if (arg === "astro") {
       defaultDeps.push("astro");
+      features.push("biome");
+      devDeps.push("@biomejs/biome");
     } else if (arg === "tailwind") {
       features.push("tailwind");
       defaultDeps.push("tailwindcss");
       devDeps.push("@tailwindcss/vite");
-    } else if (arg === "biome") {
-      features.push("biome");
-      devDeps.push("@biomejs/biome");
     } else if (arg === "solid") {
       features.push("solid");
       defaultDeps.push("solid-js");
