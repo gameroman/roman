@@ -6,7 +6,10 @@ describe("resolveConfig", () => {
   it("should resolve with empty array", () => {
     expect(resolveConfig([])).toEqual({
       template: "default",
-      dependencies: { dev: ["@gameroman/config", "typescript"] },
+      features: ["oxfmt", "oxlint"],
+      dependencies: {
+        dev: ["@gameroman/config", "oxfmt", "oxlint", "typescript"],
+      },
     });
   });
 
@@ -55,7 +58,7 @@ describe("resolveConfig", () => {
     });
   });
 
-  it("should resolve astro solid", () => {
+  it("should resolve astro solid tailwind", () => {
     expect(resolveConfig(["astro", "solid", "tailwind"])).toEqual({
       template: "astro",
       features: ["biome", "solid", "tailwind", "wrangler"],

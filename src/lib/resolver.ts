@@ -39,6 +39,11 @@ function resolveConfig(args: string[]): ResolvedConfig {
     }
   }
 
+  if (template === "default") {
+    features.push("oxfmt", "oxlint");
+    devDeps.push("oxfmt", "oxlint");
+  }
+
   if (template === "astro") {
     features.push("wrangler");
     devDeps.push("wrangler");
