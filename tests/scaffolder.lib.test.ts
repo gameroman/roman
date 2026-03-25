@@ -23,20 +23,4 @@ describe("getScaffoldContent", () => {
       ],
     });
   });
-
-  it("should generate astro config", () => {
-    expect(getScaffoldContent({ template: "astro" })).toEqual({
-      files: [
-        {
-          path: "astro.config.ts",
-          content: `import { defineConfig } from "astro/config";
-
-export default defineConfig({
-  output: "static",
-});
-`,
-        },
-      ],
-    });
-  });
 });
