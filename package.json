@@ -1,0 +1,27 @@
+{
+  "name": "roman",
+  "version": "0.1.0",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gameroman/roman.git"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "scripts": {
+    "lint": "oxlint",
+    "format": "oxfmt && oxlint --fix",
+    "build": "tsdown",
+    "prepublishOnly": "bun run build"
+  },
+  "devDependencies": {
+    "@gameroman/config": "^0.0.5",
+    "oxfmt": "^0.42.0",
+    "oxlint": "^1.57.0",
+    "oxlint-tsgolint": "^0.17.4",
+    "tsdown": "^0.21.5",
+    "typescript": "^6.0.2"
+  }
+}
