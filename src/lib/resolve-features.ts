@@ -1,5 +1,14 @@
-function resolveFeatures(args: string[]) {
-  return args;
+interface ResolvedConfig {
+  template: "default";
 }
 
-export { resolveFeatures };
+function resolveConfig(args: string[]): ResolvedConfig {
+  if (args) {
+  }
+  return {
+    template: "default",
+  };
+}
+
+export { resolveConfig };
+export type { ResolvedConfig };

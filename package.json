@@ -13,8 +13,11 @@
     "dist"
   ],
   "type": "module",
+  "imports": {
+    "#lib/*": "./src/lib/*.ts"
+  },
   "scripts": {
-    "test": "bun test",
+    "test": "bun test --dots",
     "lint": "oxlint",
     "format": "oxfmt && oxlint --fix",
     "build": "tsdown",

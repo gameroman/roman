@@ -1,9 +1,9 @@
 import { describe, it, expect } from "bun:test";
 
-import { resolveConfig } from "#lib/resolve-features";
+import { getScaffoldContent } from "#lib/scaffolder";
 
 describe("resolveFeatures", () => {
   it("should resolve features with empty array", () => {
-    expect(resolveConfig([])).toEqual({ template: "default" });
+    expect(getScaffoldContent({ template: "default" })).toEqual({ files: [] });
   });
 });

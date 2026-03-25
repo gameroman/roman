@@ -1,7 +1,11 @@
-import { resolveFeatures } from "./lib/resolve-features";
+import { resolveConfig } from "./lib/resolve-features";
+import { getScaffoldContent } from "./lib/scaffolder";
+import { writeToFs } from "./lib/writer";
 
 function main() {
-  console.log(resolveFeatures(process.argv.slice(2)));
+  const features = resolveConfig(process.argv.slice(2));
+  const content = getScaffoldContent(features);
+  writeToFs(content);
 }
 
 main();
