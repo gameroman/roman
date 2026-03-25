@@ -1,4 +1,4 @@
-import type { ResolvedConfig } from "./resolve-features";
+import type { ResolvedConfig } from "./resolver";
 
 interface FileInfo {
   path: string;
