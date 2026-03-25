@@ -1,5 +1,16 @@
+type Template = "default" | "astro";
+
+type Feature = "biome" | "ci";
+
+interface Dependencies {
+  default: string[];
+  dev: string[];
+}
+
 interface ResolvedConfig {
-  template: "default";
+  template: Template;
+  features?: Feature[];
+  dependencies?: Dependencies;
 }
 
 function resolveConfig(args: string[]): ResolvedConfig {
