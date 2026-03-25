@@ -1,21 +1,16 @@
 type Template = "default" | "astro";
 
-type Feature = "biome" | "ci";
+type Feature = "biome" | "oxfmt" | "oxlint" | "solid" | "tailwind" | "wrangler";
 
 interface Dependencies {
-  default: string[];
-  dev: string[];
-}
-
-interface Options {
-  monorepo?: false;
+  default?: string[];
+  dev?: string[];
 }
 
 interface ResolvedConfig {
   template: Template;
   features?: Feature[];
   dependencies?: Dependencies;
-  options?: Options;
 }
 
 function resolveConfig(args: string[]): ResolvedConfig {
