@@ -7,10 +7,15 @@ interface Dependencies {
   dev: string[];
 }
 
+interface Options {
+  monorepo?: false;
+}
+
 interface ResolvedConfig {
   template: Template;
   features?: Feature[];
   dependencies?: Dependencies;
+  options?: Options;
 }
 
 function resolveConfig(args: string[]): ResolvedConfig {
