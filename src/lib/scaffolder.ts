@@ -28,7 +28,7 @@ function getScaffoldContent(config: ResolvedConfig): ScaffoldContent {
       scripts.push('    "format": "oxfmt"');
     }
 
-    const scriptEntries = scripts.join(",\n") + ",";
+    const scriptEntries = scripts.join(",\n");
 
     files.push({
       path: "package.json",

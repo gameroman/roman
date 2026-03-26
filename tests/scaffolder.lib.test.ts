@@ -13,7 +13,7 @@ dist/
   "scripts": {
     "test": "bun test",
     "lint": "oxlint",
-    "format": "oxfmt",
+    "format": "oxfmt"
   }
 }
 `,
