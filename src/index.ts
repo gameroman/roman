@@ -10,7 +10,7 @@ async function main() {
   const features = resolveConfig(process.argv.slice(2));
   const content = getScaffoldContent(features);
   writeToFs(content);
-  await installDependencies(features.dependencies);
+  await installDependencies(content.dependencies);
 }
 
 await main();

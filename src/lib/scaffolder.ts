@@ -1,4 +1,4 @@
-import type { ResolvedConfig } from "./resolver";
+import type { ResolvedConfig, Dependencies } from "./resolver";
 
 interface FileInfo {
   path: string;
@@ -7,6 +7,7 @@ interface FileInfo {
 
 interface ScaffoldContent {
   files: FileInfo[];
+  dependencies: Dependencies;
 }
 
 const GITIGNORE_DEFAULT = "node_modules/\n\ndist/\n";
@@ -128,7 +129,35 @@ function getScaffoldContent(config: ResolvedConfig): ScaffoldContent {
   }
 
   files.sort((a, b) => a.path.localeCompare(b.path));
-  return { files };
+
+  const defaultDeps: string[] = [];
+  const devDeps: string[] = ["@gameroman/config", "typescript"];
+
+  if (config.template === "astro") {
+    defaultDeps.push("astro");
+    devDeps.push("@biomejs/biome", "wrangler");
+  } else {
+    devDeps.push("oxfmt", "oxlint", "oxlint-tsgolint");
+  }
+
+  for (const feature of features) {
+    if (feature === "tailwind") {
+      defaultDeps.push("tailwindcss");
+      devDeps.push("@tailwindcss/vite");
+    } else if (feature === "solid") {
+      defaultDeps.push("solid-js");
+      devDeps.push("@astrojs/solid-js");
+    } else if (feature === "tsdown") {
+      devDeps.push("tsdown");
+    }
+  }
+
+  const dependencies: Dependencies = { dev: devDeps.toSorted() };
+  if (defaultDeps.length > 0) {
+    dependencies.default = defaultDeps.toSorted();
+  }
+
+  return { files, dependencies };
 }
 
 export { getScaffoldContent };

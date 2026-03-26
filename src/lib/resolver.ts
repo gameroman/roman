@@ -18,7 +18,6 @@ interface Dependencies {
 interface ResolvedConfig {
   template: Template;
   features?: Feature[];
-  dependencies: Dependencies;
 }
 
 function getTemplate(args: string[]) {
@@ -65,13 +64,7 @@ function resolveConfig(args: string[]): ResolvedConfig {
     devDeps.push("wrangler");
   }
 
-  const dependencies: Dependencies = { dev: devDeps.toSorted() };
-
-  if (defaultDeps.length > 0) {
-    dependencies.default = defaultDeps.toSorted();
-  }
-
-  const result: ResolvedConfig = { template, dependencies };
+  const result: ResolvedConfig = { template };
 
   if (features.length > 0) result.features = features.toSorted();
 

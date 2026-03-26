@@ -90,6 +90,15 @@ describe("getScaffoldContent", () => {
       const content = getScaffoldContent({
         template: "default",
         features: ["oxfmt", "oxlint", "tsgolint"],
+      });
+      expect(content).toEqual({
+        files: [
+          { path: ".gitignore", content: defaultFiles.gitignore },
+          { path: "oxfmt.config.ts", content: defaultFiles.oxfmt },
+          { path: "oxlint.config.ts", content: defaultFiles.oxlint },
+          { path: "package.json", content: defaultFiles.packagejson },
+          { path: "tsconfig.json", content: defaultFiles.tsconfig },
+        ],
         dependencies: {
           dev: [
             "@gameroman/config",
@@ -100,15 +109,6 @@ describe("getScaffoldContent", () => {
           ],
         },
       });
-      expect(content).toEqual({
-        files: [
-          { path: ".gitignore", content: defaultFiles.gitignore },
-          { path: "oxfmt.config.ts", content: defaultFiles.oxfmt },
-          { path: "oxlint.config.ts", content: defaultFiles.oxlint },
-          { path: "package.json", content: defaultFiles.packagejson },
-          { path: "tsconfig.json", content: defaultFiles.tsconfig },
-        ],
-      });
       expect(content.files).toMatchSnapshot();
     });
 
@@ -116,6 +116,16 @@ describe("getScaffoldContent", () => {
       const content = getScaffoldContent({
         template: "default",
         features: ["oxfmt", "oxlint", "tsdown", "tsgolint"],
+      });
+      expect(content).toEqual({
+        files: [
+          { path: ".gitignore", content: defaultFiles.gitignore },
+          { path: "oxfmt.config.ts", content: defaultFiles.oxfmt },
+          { path: "oxlint.config.ts", content: defaultFiles.oxlint },
+          { path: "package.json", content: defaultFiles.packagejson },
+          { path: "tsconfig.json", content: defaultFiles.tsconfig },
+          { path: "tsdown.config.ts", content: defaultFiles.tsdown },
+        ],
         dependencies: {
           dev: [
             "@gameroman/config",
@@ -127,16 +137,6 @@ describe("getScaffoldContent", () => {
           ],
         },
       });
-      expect(content).toEqual({
-        files: [
-          { path: ".gitignore", content: defaultFiles.gitignore },
-          { path: "oxfmt.config.ts", content: defaultFiles.oxfmt },
-          { path: "oxlint.config.ts", content: defaultFiles.oxlint },
-          { path: "package.json", content: defaultFiles.packagejson },
-          { path: "tsconfig.json", content: defaultFiles.tsconfig },
-          { path: "tsdown.config.ts", content: defaultFiles.tsdown },
-        ],
-      });
     });
   });
 
@@ -145,15 +145,6 @@ describe("getScaffoldContent", () => {
       const content = getScaffoldContent({
         template: "astro",
         features: ["biome", "wrangler"],
-        dependencies: {
-          default: ["astro"],
-          dev: [
-            "@biomejs/biome",
-            "@gameroman/config",
-            "typescript",
-            "wrangler",
-          ],
-        },
       });
       expect(content).toEqual({
         files: [
@@ -163,6 +154,15 @@ describe("getScaffoldContent", () => {
           { path: "package.json", content: astroFiles.packagejson },
           { path: "tsconfig.json", content: astroFiles.tsconfig },
         ],
+        dependencies: {
+          default: ["astro"],
+          dev: [
+            "@biomejs/biome",
+            "@gameroman/config",
+            "typescript",
+            "wrangler",
+          ],
+        },
       });
       expect(content.files).toMatchSnapshot();
     });
