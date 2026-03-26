@@ -35,14 +35,16 @@ function getScaffoldContent(config: ResolvedConfig): ScaffoldContent {
   if (features.includes("oxfmt")) {
     files.push({
       path: "oxfmt.config.ts",
-      content: 'import { config } from "@gameroman/config/oxfmt";\n\nexport default config;\n',
+      content:
+        'import { config } from "@gameroman/config/oxfmt";\n\nexport default config;\n',
     });
   }
 
   if (features.includes("oxlint")) {
     files.push({
       path: "oxlint.config.ts",
-      content: 'import { config } from "@gameroman/config/oxlint";\n\nexport default config;\n',
+      content:
+        'import { config } from "@gameroman/config/oxlint";\n\nexport default config;\n',
     });
   }
 
