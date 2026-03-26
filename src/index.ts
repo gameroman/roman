@@ -1,3 +1,5 @@
+#!/usr/bin/env bun
+
 import { resolveConfig } from "./lib/resolver";
 import { getScaffoldContent } from "./lib/scaffolder";
 import { writeToFs } from "./lib/writer";

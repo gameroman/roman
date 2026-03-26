@@ -1,6 +1,14 @@
-type Template = "default" | "astro";
+type Template = "default" | "astro" | "executable";
 
-type Feature = "biome" | "oxfmt" | "oxlint" | "solid" | "tailwind" | "wrangler";
+type Feature =
+  | "biome"
+  | "oxfmt"
+  | "oxlint"
+  | "tsgolint"
+  | "solid"
+  | "tailwind"
+  | "wrangler"
+  | "tsdown";
 
 interface Dependencies {
   default?: string[];
