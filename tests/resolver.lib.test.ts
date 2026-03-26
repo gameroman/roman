@@ -41,7 +41,7 @@ describe("resolveConfig", () => {
     });
 
     it("should resolve tsdown tsgolint", () => {
-      expect(resolveConfig(["tsdown"])).toEqual({
+      expect(resolveConfig(["tsdown", "tsgolint"])).toEqual({
         template: "default",
         features: ["oxfmt", "oxlint", "tsdown", "tsgolint"],
         dependencies: {

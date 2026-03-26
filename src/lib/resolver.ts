@@ -56,6 +56,9 @@ function resolveConfig(args: string[]): ResolvedConfig {
     } else if (arg === "tsgolint") {
       features.push("tsgolint");
       devDeps.push("oxlint-tsgolint");
+    } else if (arg === "tsdown") {
+      features.push("tsdown");
+      devDeps.push("tsdown");
     }
   }
 

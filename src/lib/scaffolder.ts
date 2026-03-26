@@ -112,6 +112,14 @@ function getScaffoldContent(config: ResolvedConfig): ScaffoldContent {
     });
   }
 
+  if (features.includes("tsdown")) {
+    files.push({
+      path: "tsdown.config.ts",
+      content:
+        'import { defineConfig } from "tsdown";\n\nexport default defineConfig({\n  dts: true,\n  exports: true,\n});\n',
+    });
+  }
+
   files.sort((a, b) => a.path.localeCompare(b.path));
 
   return { files };
