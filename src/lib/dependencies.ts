@@ -1,4 +1,5 @@
 import { $ } from "bun";
+
 import type { Dependencies } from "./resolver";
 
 async function installDependencies(dependencies: Dependencies) {
