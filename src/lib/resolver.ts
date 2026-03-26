@@ -21,12 +21,17 @@ interface ResolvedConfig {
   dependencies: Dependencies;
 }
 
-function resolveConfig(args: string[]): ResolvedConfig {
-  const template = args.includes("astro")
+function getTemplate(args: string[]) {
+  return args.includes("astro")
     ? "astro"
     : args.includes("exe")
       ? "executable"
       : "default";
+}
+
+function resolveConfig(args: string[]): ResolvedConfig {
+  const template = getTemplate(args);
+
   const features: Feature[] = [];
   const defaultDeps: string[] = [];
   const devDeps: string[] = ["@gameroman/config", "typescript"];
