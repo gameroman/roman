@@ -4,7 +4,7 @@ import { getScaffoldContent } from "#lib/scaffolder";
 
 const defaultFiles = {
   gitignore: `node_modules/\n\ndist/\n`,
-  packagejson: `{\n  "private": true,\n  "type": "module",\n  "devDependencies": {\n    "typescript": "^6.0.2"\n  }\n}\n`,
+  packagejson: `{\n  "private": true,\n  "type": "module"\n}\n`,
   tsconfig: `{\n  "extends": "@gameroman/config/tsconfig",\n  "compilerOptions": {\n    "types": ["bun"]\n  }\n}\n`,
 } as const;
 

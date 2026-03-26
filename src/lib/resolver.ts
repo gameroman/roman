@@ -22,7 +22,11 @@ interface ResolvedConfig {
 }
 
 function resolveConfig(args: string[]): ResolvedConfig {
-  const template = args.includes("astro") ? "astro" : "default";
+  const template = args.includes("astro")
+    ? "astro"
+    : args.includes("exe")
+      ? "executable"
+      : "default";
   const features: Feature[] = [];
   const defaultDeps: string[] = [];
   const devDeps: string[] = ["@gameroman/config", "typescript"];
@@ -44,10 +48,13 @@ function resolveConfig(args: string[]): ResolvedConfig {
       features.push("oxfmt");
     } else if (arg === "oxlint") {
       features.push("oxlint");
+    } else if (arg === "tsgolint") {
+      features.push("tsgolint");
+      devDeps.push("tsgolint");
     }
   }
 
-  if (template === "default") {
+  if (template === "default" || template === "executable") {
     features.push("oxfmt", "oxlint");
     devDeps.push("oxfmt", "oxlint");
   }
