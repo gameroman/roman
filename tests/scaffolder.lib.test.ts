@@ -2,6 +2,8 @@ import { describe, it, expect } from "bun:test";
 
 import { getScaffoldContent } from "#lib/scaffolder";
 
+import { filesToMarkdown } from "./files-to-markdown";
+
 const defaultFiles = {
   gitignore: `node_modules/
 
@@ -80,15 +82,14 @@ export default defineConfig({
 describe("getScaffoldContent", () => {
   describe("default template", () => {
     it("should generate basic files for default template", () => {
-      expect(
-        getScaffoldContent({
-          template: "default",
-          features: ["oxfmt", "oxlint"],
-          dependencies: {
-            dev: ["@gameroman/config", "oxfmt", "oxlint", "typescript"],
-          },
-        }),
-      ).toEqual({
+      const content = getScaffoldContent({
+        template: "default",
+        features: ["oxfmt", "oxlint"],
+        dependencies: {
+          dev: ["@gameroman/config", "oxfmt", "oxlint", "typescript"],
+        },
+      });
+      expect(content).toEqual({
         files: [
           { path: ".gitignore", content: defaultFiles.gitignore },
           { path: "package.json", content: defaultFiles.packagejson },
@@ -97,6 +98,7 @@ describe("getScaffoldContent", () => {
           { path: "oxlint.config.ts", content: defaultFiles.oxlint },
         ],
       });
+      expect(filesToMarkdown(content.files)).toMatchSnapshot();
     });
   });
 

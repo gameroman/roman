@@ -52,4 +52,4 @@ function getScaffoldContent(config: ResolvedConfig): ScaffoldContent {
 }
 
 export { getScaffoldContent };
-export type { ScaffoldContent };
+export type { ScaffoldContent, FileInfo };
