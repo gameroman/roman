@@ -89,9 +89,15 @@ describe("getScaffoldContent", () => {
     it("should generate basic files for default template", () => {
       const content = getScaffoldContent({
         template: "default",
-        features: ["oxfmt", "oxlint"],
+        features: ["oxfmt", "oxlint", "tsgolint"],
         dependencies: {
-          dev: ["@gameroman/config", "oxfmt", "oxlint", "typescript"],
+          dev: [
+            "@gameroman/config",
+            "oxfmt",
+            "oxlint",
+            "oxlint-tsgolint",
+            "typescript",
+          ],
         },
       });
       expect(content).toEqual({
@@ -109,9 +115,16 @@ describe("getScaffoldContent", () => {
     it("should generate basic files for default template with tsdown", () => {
       const content = getScaffoldContent({
         template: "default",
-        features: ["oxfmt", "oxlint", "tsdown"],
+        features: ["oxfmt", "oxlint", "tsdown", "tsgolint"],
         dependencies: {
-          dev: ["@gameroman/config", "oxfmt", "oxlint", "tsdown", "typescript"],
+          dev: [
+            "@gameroman/config",
+            "oxfmt",
+            "oxlint",
+            "oxlint-tsgolint",
+            "tsdown",
+            "typescript",
+          ],
         },
       });
       expect(content).toEqual({

@@ -7,14 +7,20 @@ describe("resolveConfig", () => {
     it("should resolve with empty array", () => {
       expect(resolveConfig([])).toEqual({
         template: "default",
-        features: ["oxfmt", "oxlint"],
+        features: ["oxfmt", "oxlint", "tsgolint"],
         dependencies: {
-          dev: ["@gameroman/config", "oxfmt", "oxlint", "typescript"],
+          dev: [
+            "@gameroman/config",
+            "oxfmt",
+            "oxlint",
+            "oxlint-tsgolint",
+            "typescript",
+          ],
         },
       });
     });
 
-    it("should resolve tsgolint", () => {
+    it("should resolve tsgolint (already included)", () => {
       expect(resolveConfig(["tsgolint"])).toEqual({
         template: "default",
         features: ["oxfmt", "oxlint", "tsgolint"],
@@ -33,14 +39,21 @@ describe("resolveConfig", () => {
     it("should resolve tsdown", () => {
       expect(resolveConfig(["tsdown"])).toEqual({
         template: "default",
-        features: ["oxfmt", "oxlint", "tsdown"],
+        features: ["oxfmt", "oxlint", "tsdown", "tsgolint"],
         dependencies: {
-          dev: ["@gameroman/config", "oxfmt", "oxlint", "tsdown", "typescript"],
+          dev: [
+            "@gameroman/config",
+            "oxfmt",
+            "oxlint",
+            "oxlint-tsgolint",
+            "tsdown",
+            "typescript",
+          ],
         },
       });
     });
 
-    it("should resolve tsdown tsgolint", () => {
+    it("should resolve tsdown tsgolint (tsgolint already included)", () => {
       expect(resolveConfig(["tsdown", "tsgolint"])).toEqual({
         template: "default",
         features: ["oxfmt", "oxlint", "tsdown", "tsgolint"],
@@ -61,16 +74,6 @@ describe("resolveConfig", () => {
   describe("executable template", () => {
     it("should resolve exe", () => {
       expect(resolveConfig(["exe"])).toEqual({
-        template: "executable",
-        features: ["oxfmt", "oxlint"],
-        dependencies: {
-          dev: ["@gameroman/config", "oxfmt", "oxlint", "typescript"],
-        },
-      });
-    });
-
-    it("should resolve exe tsgolint", () => {
-      expect(resolveConfig(["exe", "tsgolint"])).toEqual({
         template: "executable",
         features: ["oxfmt", "oxlint", "tsgolint"],
         dependencies: {

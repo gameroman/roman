@@ -49,13 +49,6 @@ function resolveConfig(args: string[]): ResolvedConfig {
       features.push("solid");
       defaultDeps.push("solid-js");
       devDeps.push("@astrojs/solid-js");
-    } else if (arg === "oxfmt") {
-      features.push("oxfmt");
-    } else if (arg === "oxlint") {
-      features.push("oxlint");
-    } else if (arg === "tsgolint") {
-      features.push("tsgolint");
-      devDeps.push("oxlint-tsgolint");
     } else if (arg === "tsdown") {
       features.push("tsdown");
       devDeps.push("tsdown");
@@ -63,8 +56,8 @@ function resolveConfig(args: string[]): ResolvedConfig {
   }
 
   if (template === "default" || template === "executable") {
-    features.push("oxfmt", "oxlint");
-    devDeps.push("oxfmt", "oxlint");
+    features.push("oxfmt", "oxlint", "tsgolint");
+    devDeps.push("oxfmt", "oxlint", "oxlint-tsgolint");
   }
 
   if (template === "astro") {
