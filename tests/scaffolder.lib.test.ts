@@ -32,6 +32,13 @@ export default config;
 
 export default config;
 `,
+  tsdown: `import { defineConfig } from "tsdown";
+
+export default defineConfig({
+  dts: true,
+  exports: true,
+});
+`,
 } as const;
 
 const astroFiles = {
@@ -97,6 +104,26 @@ describe("getScaffoldContent", () => {
         ],
       });
       expect(content.files).toMatchSnapshot();
+    });
+
+    it("should generate basic files for default template with tsdown", () => {
+      const content = getScaffoldContent({
+        template: "default",
+        features: ["oxfmt", "oxlint", "tsdown"],
+        dependencies: {
+          dev: ["@gameroman/config", "oxfmt", "oxlint", "tsdown", "typescript"],
+        },
+      });
+      expect(content).toEqual({
+        files: [
+          { path: ".gitignore", content: defaultFiles.gitignore },
+          { path: "oxfmt.config.ts", content: defaultFiles.oxfmt },
+          { path: "oxlint.config.ts", content: defaultFiles.oxlint },
+          { path: "package.json", content: defaultFiles.packagejson },
+          { path: "tsconfig.json", content: defaultFiles.tsconfig },
+          { path: "tsdown.config.ts", content: defaultFiles.tsdown },
+        ],
+      });
     });
   });
 

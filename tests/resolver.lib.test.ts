@@ -29,6 +29,33 @@ describe("resolveConfig", () => {
         },
       });
     });
+
+    it("should resolve tsdown", () => {
+      expect(resolveConfig(["tsdown"])).toEqual({
+        template: "default",
+        features: ["oxfmt", "oxlint", "tsdown"],
+        dependencies: {
+          dev: ["@gameroman/config", "oxfmt", "oxlint", "tsdown", "typescript"],
+        },
+      });
+    });
+
+    it("should resolve tsdown tsgolint", () => {
+      expect(resolveConfig(["tsdown"])).toEqual({
+        template: "default",
+        features: ["oxfmt", "oxlint", "tsdown", "tsgolint"],
+        dependencies: {
+          dev: [
+            "@gameroman/config",
+            "oxfmt",
+            "oxlint",
+            "oxlint-tsgolint",
+            "tsdown",
+            "typescript",
+          ],
+        },
+      });
+    });
   });
 
   describe("executable template", () => {
