@@ -1,0 +1,50 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`getScaffoldContent default template should generate basic files for default template 1`] = `
+"# Files
+
+## .gitignore
+
+node_modules/
+
+dist/
+
+
+## package.json
+
+{
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "bun test",
+    "lint": "oxlint",
+    "format": "oxfmt",
+  }
+}
+
+
+## tsconfig.json
+
+{
+  "extends": "@gameroman/config/tsconfig",
+  "compilerOptions": {
+    "types": ["bun"]
+  }
+}
+
+
+## oxfmt.config.ts
+
+import { config } from "@gameroman/config/oxfmt";
+
+export default config;
+
+
+## oxlint.config.ts
+
+import { config } from "@gameroman/config/oxlint";
+
+export default config;
+
+"
+`;
