@@ -12,9 +12,11 @@ interface ScaffoldContent {
 const GITIGNORE_DEFAULT = "node_modules/\n\ndist/\n";
 const GITIGNORE_ASTRO = "node_modules/\n\ndist/\n\n.astro/\n.wrangler/\n";
 
-const TSCONFIG_DEFAULT = '{\n  "extends": "@gameroman/config/tsconfig",\n  "compilerOptions": {\n    "types": ["bun"]\n  }\n}\n';
+const TSCONFIG_DEFAULT =
+  '{\n  "extends": "@gameroman/config/tsconfig",\n  "compilerOptions": {\n    "types": ["bun"]\n  }\n}\n';
 
-const TSCONFIG_ASTRO = '{\n  "extends": "astro/tsconfigs/strictest",\n  "include": [".astro/types.d.ts", "**/*"],\n  "exclude": ["dist"]\n}\n';
+const TSCONFIG_ASTRO =
+  '{\n  "extends": "astro/tsconfigs/strictest",\n  "include": [".astro/types.d.ts", "**/*"],\n  "exclude": ["dist"]\n}\n';
 
 const PACKAGEJSON_ASTRO = `{
   "type": "module",
@@ -66,10 +68,7 @@ const FEATURES: Record<string, FileGenerator> = {
   },
 };
 
-type TemplateGenerator = (
-  files: FileInfo[],
-  features: string[],
-) => void;
+type TemplateGenerator = (files: FileInfo[], features: string[]) => void;
 
 const TEMPLATES: Record<string, TemplateGenerator> = {
   default: (files, features) => {
