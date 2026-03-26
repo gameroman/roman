@@ -36,12 +36,27 @@ export default config;
 
 export default config;
 `,
+} as const;
+
+const tsdownFiles = {
   tsdown: `import { defineConfig } from "tsdown";
 
 export default defineConfig({
   dts: true,
   exports: true,
 });
+`,
+  packagejson: `{
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "bun test",
+    "lint": "oxlint",
+    "format": "oxfmt",
+    "build": "tsdown",
+    "prepublishOnly": "bun run build"
+  }
+}
 `,
 } as const;
 
@@ -116,6 +131,52 @@ describe("getScaffoldContent", () => {
       expect(content).toMatchSnapshot();
     });
 
+    it("should generate normal oxlint config without tsgolint feature", () => {
+      const content = getScaffoldContent({
+        template: "default",
+        features: ["oxfmt", "oxlint"],
+      });
+      expect(content).toEqual({
+        files: [
+          { path: ".gitignore", content: defaultFiles.gitignore },
+          { path: "oxfmt.config.ts", content: defaultFiles.oxfmt },
+          { path: "oxlint.config.ts", content: defaultFiles.oxlint },
+          { path: "package.json", content: defaultFiles.packagejson },
+          { path: "tsconfig.json", content: defaultFiles.tsconfig },
+        ],
+        dependencies: {
+          dev: ["@gameroman/config", "oxfmt", "oxlint", "typescript"],
+        },
+      });
+      expect(content).toMatchSnapshot();
+    });
+
+    it("should generate tsgolint oxlint config when only tsgolint feature is specified", () => {
+      const content = getScaffoldContent({
+        template: "default",
+        features: ["oxfmt", "tsgolint"],
+      });
+      expect(content).toEqual({
+        files: [
+          { path: ".gitignore", content: defaultFiles.gitignore },
+          { path: "oxfmt.config.ts", content: defaultFiles.oxfmt },
+          { path: "oxlint.config.ts", content: defaultFiles.tsgolint },
+          { path: "package.json", content: defaultFiles.packagejson },
+          { path: "tsconfig.json", content: defaultFiles.tsconfig },
+        ],
+        dependencies: {
+          dev: [
+            "@gameroman/config",
+            "oxfmt",
+            "oxlint",
+            "oxlint-tsgolint",
+            "typescript",
+          ],
+        },
+      });
+      expect(content).toMatchSnapshot();
+    });
+
     it("should generate basic files for default template with tsdown", () => {
       const content = getScaffoldContent({
         template: "default",
@@ -126,9 +187,9 @@ describe("getScaffoldContent", () => {
           { path: ".gitignore", content: defaultFiles.gitignore },
           { path: "oxfmt.config.ts", content: defaultFiles.oxfmt },
           { path: "oxlint.config.ts", content: defaultFiles.tsgolint },
-          { path: "package.json", content: defaultFiles.packagejson },
+          { path: "package.json", content: tsdownFiles.packagejson },
           { path: "tsconfig.json", content: defaultFiles.tsconfig },
-          { path: "tsdown.config.ts", content: defaultFiles.tsdown },
+          { path: "tsdown.config.ts", content: tsdownFiles.tsdown },
         ],
         dependencies: {
           dev: [
