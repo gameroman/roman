@@ -2,10 +2,18 @@ import { $ } from "bun";
 import type { Dependencies } from "./resolver";
 
 async function installDependencies(dependencies: Dependencies) {
-  const deps = Object.keys(dependencies);
-  if (deps.length === 0) return;
-  await $`bun add ${deps.join(" ")}`;
-  await $`bun install`;
+  const defaultDeps = dependencies.default ?? [];
+  const devDeps = dependencies.dev ?? [];
+
+  if (defaultDeps.length > 0) {
+    await $`bun add ${defaultDeps.join(" ")}`;
+  }
+  if (devDeps.length > 0) {
+    await $`bun add -d ${devDeps.join(" ")}`;
+  }
+  if (defaultDeps.length > 0 || devDeps.length > 0) {
+    await $`bun install`;
+  }
 }
 
 export { installDependencies };
