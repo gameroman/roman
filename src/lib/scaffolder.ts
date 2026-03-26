@@ -65,7 +65,7 @@ const FEATURES: Record<string, FileGenerator> = {
     files.push({
       path: "oxlint.config.ts",
       content:
-        'import { config } from "@gameroman/config/oxlint";\n\nexport default config;\n',
+        'import { config } from "@gameroman/config/oxlint/typeaware";\n\nexport default config;\n',
     });
   },
   tsdown: (files) => {

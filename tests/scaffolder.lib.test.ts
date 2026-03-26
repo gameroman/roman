@@ -32,6 +32,10 @@ export default config;
 
 export default config;
 `,
+  tsgolint: `import { config } from "@gameroman/config/oxlint/typeaware";
+
+export default config;
+`,
   tsdown: `import { defineConfig } from "tsdown";
 
 export default defineConfig({
@@ -95,7 +99,7 @@ describe("getScaffoldContent", () => {
         files: [
           { path: ".gitignore", content: defaultFiles.gitignore },
           { path: "oxfmt.config.ts", content: defaultFiles.oxfmt },
-          { path: "oxlint.config.ts", content: defaultFiles.oxlint },
+          { path: "oxlint.config.ts", content: defaultFiles.tsgolint },
           { path: "package.json", content: defaultFiles.packagejson },
           { path: "tsconfig.json", content: defaultFiles.tsconfig },
         ],
@@ -121,7 +125,7 @@ describe("getScaffoldContent", () => {
         files: [
           { path: ".gitignore", content: defaultFiles.gitignore },
           { path: "oxfmt.config.ts", content: defaultFiles.oxfmt },
-          { path: "oxlint.config.ts", content: defaultFiles.oxlint },
+          { path: "oxlint.config.ts", content: defaultFiles.tsgolint },
           { path: "package.json", content: defaultFiles.packagejson },
           { path: "tsconfig.json", content: defaultFiles.tsconfig },
           { path: "tsdown.config.ts", content: defaultFiles.tsdown },
