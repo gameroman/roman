@@ -70,6 +70,145 @@ export default config;
 }
 `;
 
+exports[`getScaffoldContent default template should generate normal oxlint config without tsgolint feature 1`] = `
+{
+  "dependencies": {
+    "dev": [
+      "@gameroman/config",
+      "oxfmt",
+      "oxlint",
+      "typescript",
+    ],
+  },
+  "files": [
+    {
+      "content": 
+"node_modules/
+
+dist/
+"
+,
+      "path": ".gitignore",
+    },
+    {
+      "content": 
+"import { config } from "@gameroman/config/oxfmt";
+
+export default config;
+"
+,
+      "path": "oxfmt.config.ts",
+    },
+    {
+      "content": 
+"import { config } from "@gameroman/config/oxlint";
+
+export default config;
+"
+,
+      "path": "oxlint.config.ts",
+    },
+    {
+      "content": 
+"{
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "bun test",
+    "lint": "oxlint",
+    "format": "oxfmt"
+  }
+}
+"
+,
+      "path": "package.json",
+    },
+    {
+      "content": 
+"{
+  "extends": "@gameroman/config/tsconfig",
+  "compilerOptions": {
+    "types": ["bun"]
+  }
+}
+"
+,
+      "path": "tsconfig.json",
+    },
+  ],
+}
+`;
+
+exports[`getScaffoldContent default template should generate tsgolint oxlint config when only tsgolint feature is specified 1`] = `
+{
+  "dependencies": {
+    "dev": [
+      "@gameroman/config",
+      "oxfmt",
+      "oxlint",
+      "oxlint-tsgolint",
+      "typescript",
+    ],
+  },
+  "files": [
+    {
+      "content": 
+"node_modules/
+
+dist/
+"
+,
+      "path": ".gitignore",
+    },
+    {
+      "content": 
+"import { config } from "@gameroman/config/oxfmt";
+
+export default config;
+"
+,
+      "path": "oxfmt.config.ts",
+    },
+    {
+      "content": 
+"import { config } from "@gameroman/config/oxlint/typeaware";
+
+export default config;
+"
+,
+      "path": "oxlint.config.ts",
+    },
+    {
+      "content": 
+"{
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "bun test",
+    "lint": "oxlint",
+    "format": "oxfmt"
+  }
+}
+"
+,
+      "path": "package.json",
+    },
+    {
+      "content": 
+"{
+  "extends": "@gameroman/config/tsconfig",
+  "compilerOptions": {
+    "types": ["bun"]
+  }
+}
+"
+,
+      "path": "tsconfig.json",
+    },
+  ],
+}
+`;
+
 exports[`getScaffoldContent default template should generate basic files for default template with tsdown 1`] = `
 {
   "dependencies": {
@@ -118,7 +257,9 @@ export default config;
   "scripts": {
     "test": "bun test",
     "lint": "oxlint",
-    "format": "oxfmt"
+    "format": "oxfmt",
+    "build": "tsdown",
+    "prepublishOnly": "bun run build"
   }
 }
 "

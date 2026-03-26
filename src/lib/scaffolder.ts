@@ -51,7 +51,7 @@ const PACKAGEJSON_ASTRO = `{
 }
 `;
 
-type FileGenerator = (files: FileInfo[]) => void;
+type FileGenerator = (files: FileInfo[], features?: string[]) => void;
 
 const FEATURES: Record<string, FileGenerator> = {
   oxfmt: (files) => {
@@ -61,12 +61,28 @@ const FEATURES: Record<string, FileGenerator> = {
         'import { config } from "@gameroman/config/oxfmt";\n\nexport default config;\n',
     });
   },
-  oxlint: (files) => {
+  oxlint: (files, features = []) => {
+    const isTypeaware = features.includes("tsgolint");
     files.push({
       path: "oxlint.config.ts",
-      content:
-        'import { config } from "@gameroman/config/oxlint/typeaware";\n\nexport default config;\n',
+      content: `import { config } from "@gameroman/config/oxlint${isTypeaware ? "/typeaware" : ""}";\n\nexport default config;\n`,
     });
+  },
+  tsgolint: (files) => {
+    const packageJson = files.find((f) => f.path === "package.json");
+    if (packageJson && !packageJson.content.includes('"lint":')) {
+      packageJson.content = packageJson.content.replace(
+        '"format": "oxfmt"',
+        '"lint": "oxlint",\n    "format": "oxfmt"',
+      );
+    }
+    if (!files.some((f) => f.path === "oxlint.config.ts")) {
+      files.push({
+        path: "oxlint.config.ts",
+        content:
+          'import { config } from "@gameroman/config/oxlint/typeaware";\n\nexport default config;\n',
+      });
+    }
   },
   tsdown: (files) => {
     files.push({
@@ -92,6 +108,12 @@ const TEMPLATES: Record<string, TemplateGenerator> = {
     const scripts: string[] = ['    "test": "bun test"'];
     if (features.includes("oxlint")) scripts.push('    "lint": "oxlint"');
     if (features.includes("oxfmt")) scripts.push('    "format": "oxfmt"');
+    if (features.includes("tsdown")) {
+      scripts.push(
+        '    "build": "tsdown"',
+        '    "prepublishOnly": "bun run build"',
+      );
+    }
     files.push({
       path: "package.json",
       content: `{\n  "private": true,\n  "type": "module",\n  "scripts": {\n${scripts.join(",\n")}\n  }\n}\n`,
@@ -125,7 +147,7 @@ function getScaffoldContent(config: ResolvedConfig): ScaffoldContent {
 
   for (const feature of features) {
     const featureFn = FEATURES[feature];
-    if (featureFn) featureFn(files);
+    if (featureFn) featureFn(files, features);
   }
 
   files.sort((a, b) => a.path.localeCompare(b.path));
@@ -137,7 +159,10 @@ function getScaffoldContent(config: ResolvedConfig): ScaffoldContent {
     defaultDeps.push("astro");
     devDeps.push("@biomejs/biome", "wrangler");
   } else {
-    devDeps.push("oxfmt", "oxlint", "oxlint-tsgolint");
+    devDeps.push("oxfmt", "oxlint");
+    if (features.includes("tsgolint")) {
+      devDeps.push("oxlint-tsgolint");
+    }
   }
 
   for (const feature of features) {
