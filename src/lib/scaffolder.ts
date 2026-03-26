@@ -112,6 +112,8 @@ function getScaffoldContent(config: ResolvedConfig): ScaffoldContent {
     });
   }
 
+  files.sort((a, b) => a.path.localeCompare(b.path));
+
   return { files };
 }
 

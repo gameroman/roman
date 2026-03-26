@@ -1,18 +1,37 @@
 // Bun Snapshot v1, https://bun.sh/docs/test/snapshots
 
 exports[`getScaffoldContent default template should generate basic files for default template 1`] = `
-"# Files
-
-## .gitignore
-
-node_modules/
+[
+  {
+    "content": 
+"node_modules/
 
 dist/
+"
+,
+    "path": ".gitignore",
+  },
+  {
+    "content": 
+"import { config } from "@gameroman/config/oxfmt";
 
+export default config;
+"
+,
+    "path": "oxfmt.config.ts",
+  },
+  {
+    "content": 
+"import { config } from "@gameroman/config/oxlint";
 
-## package.json
-
-{
+export default config;
+"
+,
+    "path": "oxlint.config.ts",
+  },
+  {
+    "content": 
+"{
   "private": true,
   "type": "module",
   "scripts": {
@@ -21,30 +40,91 @@ dist/
     "format": "oxfmt",
   }
 }
-
-
-## tsconfig.json
-
-{
+"
+,
+    "path": "package.json",
+  },
+  {
+    "content": 
+"{
   "extends": "@gameroman/config/tsconfig",
   "compilerOptions": {
     "types": ["bun"]
   }
 }
-
-
-## oxfmt.config.ts
-
-import { config } from "@gameroman/config/oxfmt";
-
-export default config;
-
-
-## oxlint.config.ts
-
-import { config } from "@gameroman/config/oxlint";
-
-export default config;
-
 "
+,
+    "path": "tsconfig.json",
+  },
+]
+`;
+
+exports[`getScaffoldContent astro template should generate basic files for astro template 1`] = `
+[
+  {
+    "content": 
+"node_modules/
+
+dist/
+
+.astro/
+.wrangler/
+"
+,
+    "path": ".gitignore",
+  },
+  {
+    "content": 
+"import { defineConfig } from "astro/config";
+
+export default defineConfig({
+  output: "static",
+});
+"
+,
+    "path": "astro.config.ts",
+  },
+  {
+    "content": 
+"{
+  "$schema": "node_modules/@biomejs/biome/configuration_schema.json",
+  "extends": ["@gameroman/config/biome"]
+}
+"
+,
+    "path": "biome.jsonc",
+  },
+  {
+    "content": 
+"{
+  "type": "module",
+  "private": true,
+  "imports": {
+    "#layout": "./src/layouts/Layout.astro",
+    "#styles/*": "./src/styles/*.css"
+  },
+  "scripts": {
+    "lint": "biome check",
+    "format": "biome check --fix",
+    "dev": "astro dev",
+    "build": "astro build",
+    "deploy": "wrangler deploy"
+  }
+}
+"
+,
+    "path": "package.json",
+  },
+  {
+    "content": 
+"{
+  "extends": "astro/tsconfigs/strictest",
+  "include": [".astro/types.d.ts", "**/*"],
+  "exclude": ["dist"]
+}
+"
+,
+    "path": "tsconfig.json",
+  },
+]
 `;

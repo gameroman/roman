@@ -2,8 +2,6 @@ import { describe, it, expect } from "bun:test";
 
 import { getScaffoldContent } from "#lib/scaffolder";
 
-import { filesToMarkdown } from "./files-to-markdown";
-
 const defaultFiles = {
   gitignore: `node_modules/
 
@@ -92,41 +90,41 @@ describe("getScaffoldContent", () => {
       expect(content).toEqual({
         files: [
           { path: ".gitignore", content: defaultFiles.gitignore },
-          { path: "package.json", content: defaultFiles.packagejson },
-          { path: "tsconfig.json", content: defaultFiles.tsconfig },
           { path: "oxfmt.config.ts", content: defaultFiles.oxfmt },
           { path: "oxlint.config.ts", content: defaultFiles.oxlint },
+          { path: "package.json", content: defaultFiles.packagejson },
+          { path: "tsconfig.json", content: defaultFiles.tsconfig },
         ],
       });
-      expect(filesToMarkdown(content.files)).toMatchSnapshot();
+      expect(content.files).toMatchSnapshot();
     });
   });
 
   describe("astro template", () => {
     it("should generate basic files for astro template", () => {
-      expect(
-        getScaffoldContent({
-          template: "astro",
-          features: ["biome", "wrangler"],
-          dependencies: {
-            default: ["astro"],
-            dev: [
-              "@biomejs/biome",
-              "@gameroman/config",
-              "typescript",
-              "wrangler",
-            ],
-          },
-        }),
-      ).toEqual({
+      const content = getScaffoldContent({
+        template: "astro",
+        features: ["biome", "wrangler"],
+        dependencies: {
+          default: ["astro"],
+          dev: [
+            "@biomejs/biome",
+            "@gameroman/config",
+            "typescript",
+            "wrangler",
+          ],
+        },
+      });
+      expect(content).toEqual({
         files: [
           { path: ".gitignore", content: astroFiles.gitignore },
-          { path: "package.json", content: astroFiles.packagejson },
-          { path: "tsconfig.json", content: astroFiles.tsconfig },
           { path: "astro.config.ts", content: astroFiles.astro },
           { path: "biome.jsonc", content: astroFiles.biome },
+          { path: "package.json", content: astroFiles.packagejson },
+          { path: "tsconfig.json", content: astroFiles.tsconfig },
         ],
       });
+      expect(content.files).toMatchSnapshot();
     });
   });
 });

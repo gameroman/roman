@@ -17,6 +17,7 @@
     "#lib/*": "./src/lib/*.ts"
   },
   "scripts": {
+    "u": "bun run --sequential format lint build test",
     "test": "bun test --dots",
     "lint": "oxlint",
     "format": "oxfmt",
