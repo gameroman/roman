@@ -1,36 +1,46 @@
 // Bun Snapshot v1, https://bun.sh/docs/test/snapshots
 
 exports[`getScaffoldContent default template should generate basic files for default template 1`] = `
-[
-  {
-    "content": 
+{
+  "dependencies": {
+    "dev": [
+      "@gameroman/config",
+      "oxfmt",
+      "oxlint",
+      "oxlint-tsgolint",
+      "typescript",
+    ],
+  },
+  "files": [
+    {
+      "content": 
 "node_modules/
 
 dist/
 "
 ,
-    "path": ".gitignore",
-  },
-  {
-    "content": 
+      "path": ".gitignore",
+    },
+    {
+      "content": 
 "import { config } from "@gameroman/config/oxfmt";
 
 export default config;
 "
 ,
-    "path": "oxfmt.config.ts",
-  },
-  {
-    "content": 
+      "path": "oxfmt.config.ts",
+    },
+    {
+      "content": 
 "import { config } from "@gameroman/config/oxlint";
 
 export default config;
 "
 ,
-    "path": "oxlint.config.ts",
-  },
-  {
-    "content": 
+      "path": "oxlint.config.ts",
+    },
+    {
+      "content": 
 "{
   "private": true,
   "type": "module",
@@ -42,10 +52,10 @@ export default config;
 }
 "
 ,
-    "path": "package.json",
-  },
-  {
-    "content": 
+      "path": "package.json",
+    },
+    {
+      "content": 
 "{
   "extends": "@gameroman/config/tsconfig",
   "compilerOptions": {
@@ -54,15 +64,111 @@ export default config;
 }
 "
 ,
-    "path": "tsconfig.json",
+      "path": "tsconfig.json",
+    },
+  ],
+}
+`;
+
+exports[`getScaffoldContent default template should generate basic files for default template with tsdown 1`] = `
+{
+  "dependencies": {
+    "dev": [
+      "@gameroman/config",
+      "oxfmt",
+      "oxlint",
+      "oxlint-tsgolint",
+      "tsdown",
+      "typescript",
+    ],
   },
-]
+  "files": [
+    {
+      "content": 
+"node_modules/
+
+dist/
+"
+,
+      "path": ".gitignore",
+    },
+    {
+      "content": 
+"import { config } from "@gameroman/config/oxfmt";
+
+export default config;
+"
+,
+      "path": "oxfmt.config.ts",
+    },
+    {
+      "content": 
+"import { config } from "@gameroman/config/oxlint";
+
+export default config;
+"
+,
+      "path": "oxlint.config.ts",
+    },
+    {
+      "content": 
+"{
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "bun test",
+    "lint": "oxlint",
+    "format": "oxfmt"
+  }
+}
+"
+,
+      "path": "package.json",
+    },
+    {
+      "content": 
+"{
+  "extends": "@gameroman/config/tsconfig",
+  "compilerOptions": {
+    "types": ["bun"]
+  }
+}
+"
+,
+      "path": "tsconfig.json",
+    },
+    {
+      "content": 
+"import { defineConfig } from "tsdown";
+
+export default defineConfig({
+  dts: true,
+  exports: true,
+});
+"
+,
+      "path": "tsdown.config.ts",
+    },
+  ],
+}
 `;
 
 exports[`getScaffoldContent astro template should generate basic files for astro template 1`] = `
-[
-  {
-    "content": 
+{
+  "dependencies": {
+    "default": [
+      "astro",
+    ],
+    "dev": [
+      "@biomejs/biome",
+      "@gameroman/config",
+      "typescript",
+      "wrangler",
+    ],
+  },
+  "files": [
+    {
+      "content": 
 "node_modules/
 
 dist/
@@ -71,10 +177,10 @@ dist/
 .wrangler/
 "
 ,
-    "path": ".gitignore",
-  },
-  {
-    "content": 
+      "path": ".gitignore",
+    },
+    {
+      "content": 
 "import { defineConfig } from "astro/config";
 
 export default defineConfig({
@@ -82,20 +188,20 @@ export default defineConfig({
 });
 "
 ,
-    "path": "astro.config.ts",
-  },
-  {
-    "content": 
+      "path": "astro.config.ts",
+    },
+    {
+      "content": 
 "{
   "$schema": "node_modules/@biomejs/biome/configuration_schema.json",
   "extends": ["@gameroman/config/biome"]
 }
 "
 ,
-    "path": "biome.jsonc",
-  },
-  {
-    "content": 
+      "path": "biome.jsonc",
+    },
+    {
+      "content": 
 "{
   "type": "module",
   "private": true,
@@ -113,10 +219,10 @@ export default defineConfig({
 }
 "
 ,
-    "path": "package.json",
-  },
-  {
-    "content": 
+      "path": "package.json",
+    },
+    {
+      "content": 
 "{
   "extends": "astro/tsconfigs/strictest",
   "include": [".astro/types.d.ts", "**/*"],
@@ -124,7 +230,8 @@ export default defineConfig({
 }
 "
 ,
-    "path": "tsconfig.json",
-  },
-]
+      "path": "tsconfig.json",
+    },
+  ],
+}
 `;

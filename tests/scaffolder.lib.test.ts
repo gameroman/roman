@@ -109,7 +109,7 @@ describe("getScaffoldContent", () => {
           ],
         },
       });
-      expect(content.files).toMatchSnapshot();
+      expect(content).toMatchSnapshot();
     });
 
     it("should generate basic files for default template with tsdown", () => {
@@ -137,6 +137,7 @@ describe("getScaffoldContent", () => {
           ],
         },
       });
+      expect(content).toMatchSnapshot();
     });
   });
 
@@ -164,7 +165,7 @@ describe("getScaffoldContent", () => {
           ],
         },
       });
-      expect(content.files).toMatchSnapshot();
+      expect(content).toMatchSnapshot();
     });
   });
 });
