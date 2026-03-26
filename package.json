@@ -16,6 +16,10 @@
   "imports": {
     "#lib/*": "./src/lib/*.ts"
   },
+  "exports": {
+    ".": "./dist/index.mjs",
+    "./package.json": "./package.json"
+  },
   "scripts": {
     "u": "bun run --sequential format lint build test",
     "test": "bun test --dots",
@@ -35,9 +39,5 @@
   },
   "engines": {
     "bun": ">=1.3.11"
-  },
-  "exports": {
-    ".": "./dist/index.mjs",
-    "./package.json": "./package.json"
   }
 }
