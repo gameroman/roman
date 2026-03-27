@@ -1,6 +1,6 @@
 # Development guide
 
-## Avaliable commands
+## Available commands
 
 ```sh
 # Lint and typecheck
@@ -21,6 +21,6 @@ bun u
 Never edit test snapshots manually. Use `bun run test -u` instead
 
 ```sh
-# Run tests and update snaphots
+# Run tests and update snapshots
 bun run test -u
 ```

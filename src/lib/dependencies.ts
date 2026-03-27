@@ -7,8 +7,8 @@ async function installDependencies(dependencies: Dependencies) {
   const devDeps = dependencies.dev ?? [];
 
   if (defaultDeps.length > 0) {
-    const defaulteDepsArg = defaultDeps.join(" ");
-    await $`bun add ${{ raw: defaulteDepsArg }}`;
+    const defaultDepsArg = defaultDeps.join(" ");
+    await $`bun add ${{ raw: defaultDepsArg }}`;
   }
   if (devDeps.length > 0) {
     const devDepsArg = devDeps.join(" ");

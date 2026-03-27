@@ -152,34 +152,39 @@ function getScaffoldContent(config: ResolvedConfig): ScaffoldContent {
 
   files.sort((a, b) => a.path.localeCompare(b.path));
 
-  const defaultDeps: string[] = [];
-  const devDeps: string[] = ["@gameroman/config", "typescript"];
+  const defaultDeps = new Set<string>();
+  const devDeps = new Set<string>(["@gameroman/config", "typescript"]);
 
   if (config.template === "astro") {
-    defaultDeps.push("astro");
-    devDeps.push("@biomejs/biome", "wrangler");
-  } else {
-    devDeps.push("oxfmt", "oxlint");
-    if (features.includes("tsgolint")) {
-      devDeps.push("oxlint-tsgolint");
-    }
+    defaultDeps.add("astro");
   }
 
   for (const feature of features) {
     if (feature === "tailwind") {
-      defaultDeps.push("tailwindcss");
-      devDeps.push("@tailwindcss/vite");
+      defaultDeps.add("tailwindcss");
+      devDeps.add("@tailwindcss/vite");
     } else if (feature === "solid") {
-      defaultDeps.push("solid-js");
-      devDeps.push("@astrojs/solid-js");
+      defaultDeps.add("solid-js");
+      devDeps.add("@astrojs/solid-js");
     } else if (feature === "tsdown") {
-      devDeps.push("tsdown");
+      devDeps.add("tsdown");
+    } else if (feature === "wrangler") {
+      devDeps.add("wrangler");
+    } else if (feature === "biome") {
+      devDeps.add("@biomejs/biome");
+    } else if (feature === "oxfmt") {
+      devDeps.add("oxfmt");
+    } else if (feature === "oxlint") {
+      devDeps.add("oxlint");
+    } else if (feature === "tsgolint") {
+      devDeps.add("oxlint");
+      devDeps.add("oxlint-tsgolint");
     }
   }
 
-  const dependencies: Dependencies = { dev: devDeps.toSorted() };
-  if (defaultDeps.length > 0) {
-    dependencies.default = defaultDeps.toSorted();
+  const dependencies: Dependencies = { dev: Array.from(devDeps).toSorted() };
+  if (defaultDeps.size > 0) {
+    dependencies.default = Array.from(defaultDeps).toSorted();
   }
 
   return { files, dependencies };
