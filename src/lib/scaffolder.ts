@@ -137,7 +137,7 @@ const TEMPLATES: Record<Template, TemplateGenerator> = {
     });
     const pkg = generatePackageJson(config);
     if (hasTailwind) {
-      pkg.imports = pkg.imports ?? {};
+      pkg.imports ??= {};
       pkg.imports["#styles"] = "./src/styles/global.css";
     }
     files.push({
