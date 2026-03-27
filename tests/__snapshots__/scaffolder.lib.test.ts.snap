@@ -1,0 +1,474 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`getScaffoldContent default template should generate basic files for default template 1`] = `
+{
+  "dependencies": {
+    "dev": [
+      "@gameroman/config",
+      "oxfmt",
+      "oxlint",
+      "oxlint-tsgolint",
+      "typescript",
+    ],
+  },
+  "files": [
+    {
+      "content": 
+"node_modules/
+
+dist/
+"
+,
+      "path": ".gitignore",
+    },
+    {
+      "content": 
+"import { config } from "@gameroman/config/oxfmt";
+
+export default config;
+"
+,
+      "path": "oxfmt.config.ts",
+    },
+    {
+      "content": 
+"import { config } from "@gameroman/config/oxlint/typeaware";
+
+export default config;
+"
+,
+      "path": "oxlint.config.ts",
+    },
+    {
+      "content": 
+"{
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "bun test",
+    "lint": "oxlint",
+    "format": "oxfmt"
+  }
+}
+"
+,
+      "path": "package.json",
+    },
+    {
+      "content": 
+"{
+  "extends": "@gameroman/config/tsconfig",
+  "compilerOptions": {
+    "types": ["bun"]
+  }
+}
+"
+,
+      "path": "tsconfig.json",
+    },
+  ],
+}
+`;
+
+exports[`getScaffoldContent default template should generate normal oxlint config without tsgolint feature 1`] = `
+{
+  "dependencies": {
+    "dev": [
+      "@gameroman/config",
+      "oxfmt",
+      "oxlint",
+      "typescript",
+    ],
+  },
+  "files": [
+    {
+      "content": 
+"node_modules/
+
+dist/
+"
+,
+      "path": ".gitignore",
+    },
+    {
+      "content": 
+"import { config } from "@gameroman/config/oxfmt";
+
+export default config;
+"
+,
+      "path": "oxfmt.config.ts",
+    },
+    {
+      "content": 
+"import { config } from "@gameroman/config/oxlint";
+
+export default config;
+"
+,
+      "path": "oxlint.config.ts",
+    },
+    {
+      "content": 
+"{
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "bun test",
+    "lint": "oxlint",
+    "format": "oxfmt"
+  }
+}
+"
+,
+      "path": "package.json",
+    },
+    {
+      "content": 
+"{
+  "extends": "@gameroman/config/tsconfig",
+  "compilerOptions": {
+    "types": ["bun"]
+  }
+}
+"
+,
+      "path": "tsconfig.json",
+    },
+  ],
+}
+`;
+
+exports[`getScaffoldContent default template should generate tsgolint oxlint config when only tsgolint feature is specified 1`] = `
+{
+  "dependencies": {
+    "dev": [
+      "@gameroman/config",
+      "oxfmt",
+      "oxlint",
+      "oxlint-tsgolint",
+      "typescript",
+    ],
+  },
+  "files": [
+    {
+      "content": 
+"node_modules/
+
+dist/
+"
+,
+      "path": ".gitignore",
+    },
+    {
+      "content": 
+"import { config } from "@gameroman/config/oxfmt";
+
+export default config;
+"
+,
+      "path": "oxfmt.config.ts",
+    },
+    {
+      "content": 
+"import { config } from "@gameroman/config/oxlint/typeaware";
+
+export default config;
+"
+,
+      "path": "oxlint.config.ts",
+    },
+    {
+      "content": 
+"{
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "bun test",
+    "lint": "oxlint",
+    "format": "oxfmt"
+  }
+}
+"
+,
+      "path": "package.json",
+    },
+    {
+      "content": 
+"{
+  "extends": "@gameroman/config/tsconfig",
+  "compilerOptions": {
+    "types": ["bun"]
+  }
+}
+"
+,
+      "path": "tsconfig.json",
+    },
+  ],
+}
+`;
+
+exports[`getScaffoldContent default template should generate basic files for default template with tsdown 1`] = `
+{
+  "dependencies": {
+    "dev": [
+      "@gameroman/config",
+      "oxfmt",
+      "oxlint",
+      "oxlint-tsgolint",
+      "tsdown",
+      "typescript",
+    ],
+  },
+  "files": [
+    {
+      "content": 
+"node_modules/
+
+dist/
+"
+,
+      "path": ".gitignore",
+    },
+    {
+      "content": 
+"import { config } from "@gameroman/config/oxfmt";
+
+export default config;
+"
+,
+      "path": "oxfmt.config.ts",
+    },
+    {
+      "content": 
+"import { config } from "@gameroman/config/oxlint/typeaware";
+
+export default config;
+"
+,
+      "path": "oxlint.config.ts",
+    },
+    {
+      "content": 
+"{
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "bun test",
+    "lint": "oxlint",
+    "format": "oxfmt",
+    "build": "tsdown",
+    "prepublishOnly": "bun run build"
+  }
+}
+"
+,
+      "path": "package.json",
+    },
+    {
+      "content": 
+"{
+  "extends": "@gameroman/config/tsconfig",
+  "compilerOptions": {
+    "types": ["bun"]
+  }
+}
+"
+,
+      "path": "tsconfig.json",
+    },
+    {
+      "content": 
+"import { defineConfig } from "tsdown";
+
+export default defineConfig({
+  dts: true,
+  exports: true,
+});
+"
+,
+      "path": "tsdown.config.ts",
+    },
+  ],
+}
+`;
+
+exports[`getScaffoldContent astro template should generate basic files for astro template 1`] = `
+{
+  "dependencies": {
+    "default": [
+      "astro",
+    ],
+    "dev": [
+      "@biomejs/biome",
+      "@gameroman/config",
+      "typescript",
+      "wrangler",
+    ],
+  },
+  "files": [
+    {
+      "content": 
+"node_modules/
+
+dist/
+
+.astro/
+.wrangler/
+"
+,
+      "path": ".gitignore",
+    },
+    {
+      "content": 
+"import { defineConfig } from "astro/config";
+
+export default defineConfig({
+  output: "static",
+});
+"
+,
+      "path": "astro.config.ts",
+    },
+    {
+      "content": 
+"{
+  "$schema": "node_modules/@biomejs/biome/configuration_schema.json",
+  "extends": ["@gameroman/config/biome"]
+}
+"
+,
+      "path": "biome.jsonc",
+    },
+    {
+      "content": 
+"{
+  "private": true,
+  "type": "module",
+  "imports": {
+    "#layout": "./src/layouts/Layout.astro"
+  },
+  "scripts": {
+    "lint": "biome check",
+    "format": "biome check --fix",
+    "dev": "astro dev",
+    "build": "astro build",
+    "deploy": "wrangler deploy"
+  }
+}
+"
+,
+      "path": "package.json",
+    },
+    {
+      "content": 
+"{
+  "extends": "astro/tsconfigs/strictest",
+  "include": [".astro/types.d.ts", "**/*"],
+  "exclude": ["dist"]
+}
+"
+,
+      "path": "tsconfig.json",
+    },
+  ],
+}
+`;
+
+exports[`getScaffoldContent astro template should generate astro template with tailwindcss 1`] = `
+{
+  "dependencies": {
+    "default": [
+      "astro",
+      "tailwindcss",
+    ],
+    "dev": [
+      "@biomejs/biome",
+      "@gameroman/config",
+      "@tailwindcss/vite",
+      "typescript",
+      "wrangler",
+    ],
+  },
+  "files": [
+    {
+      "content": 
+"node_modules/
+
+dist/
+
+.astro/
+.wrangler/
+"
+,
+      "path": ".gitignore",
+    },
+    {
+      "content": 
+"import tailwindcss from "@tailwindcss/vite";
+import { defineConfig } from "astro/config";
+
+export default defineConfig({
+  output: "static",
+  vite: { plugins: [tailwindcss()] },
+});
+"
+,
+      "path": "astro.config.ts",
+    },
+    {
+      "content": 
+"{
+  "$schema": "node_modules/@biomejs/biome/configuration_schema.json",
+  "extends": ["@gameroman/config/biome"],
+  "css": { "parser": { "tailwindDirectives": true } }
+}
+"
+,
+      "path": "biome.jsonc",
+    },
+    {
+      "content": 
+"{
+  "private": true,
+  "type": "module",
+  "imports": {
+    "#layout": "./src/layouts/Layout.astro"
+  },
+  "scripts": {
+    "lint": "biome check",
+    "format": "biome check --fix",
+    "dev": "astro dev",
+    "build": "astro build",
+    "deploy": "wrangler deploy"
+  }
+}
+"
+,
+      "path": "package.json",
+    },
+    {
+      "content": 
+"/** @type {import('tailwindcss').Config} */
+export default {
+  content: { files: ["./src/**/*.{ts,tsx,astro}"] },
+};
+"
+,
+      "path": "tailwind.config.ts",
+    },
+    {
+      "content": 
+"{
+  "extends": "astro/tsconfigs/strictest",
+  "include": [".astro/types.d.ts", "**/*"],
+  "exclude": ["dist"]
+}
+"
+,
+      "path": "tsconfig.json",
+    },
+  ],
+}
+`;
