@@ -17,11 +17,8 @@ function writeToFs(
 
   for (const file of content.files) {
     const filePath = path.join(targetDir, file.path);
-    const dir = filePath.substring(
-      0,
-      filePath.lastIndexOf("/") || filePath.lastIndexOf("\\"),
-    );
-    if (dir) fs.mkdirSync(dir, { recursive: true });
+    const dir = path.dirname(filePath);
+    if (dir && dir !== ".") fs.mkdirSync(dir, { recursive: true });
     fs.writeFileSync(filePath, file.content, "utf-8");
   }
 }
