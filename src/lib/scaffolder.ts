@@ -1,5 +1,5 @@
-import { generatePackageJson, serializePackageJson } from "./package-json";
 import { generateAstroConfig, serializeAstroConfig } from "./astro-config";
+import { generatePackageJson, serializePackageJson } from "./package-json";
 import type {
   ResolvedConfig,
   Dependencies,

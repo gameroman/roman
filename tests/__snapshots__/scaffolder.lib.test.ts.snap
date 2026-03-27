@@ -571,3 +571,117 @@ export default defineConfig({
   ],
 }
 `;
+
+exports[`getScaffoldContent astro template should generate astro template with solidjs and tailwindcss 1`] = `
+{
+  "dependencies": {
+    "default": [
+      "astro",
+      "solid-js",
+      "tailwindcss",
+    ],
+    "dev": [
+      "@astrojs/solid-js",
+      "@biomejs/biome",
+      "@gameroman/config",
+      "@tailwindcss/vite",
+      "typescript",
+      "wrangler",
+    ],
+  },
+  "files": [
+    {
+      "content": 
+"@import "tailwindcss";
+"
+,
+      "path": "src/styles/global.css",
+    },
+    {
+      "content": 
+"node_modules/
+
+dist/
+
+.astro/
+.wrangler/
+"
+,
+      "path": ".gitignore",
+    },
+    {
+      "content": 
+"import solid from "@astrojs/solid-js";
+import tailwindcss from "@tailwindcss/vite";
+import { defineConfig } from "astro/config";
+
+export default defineConfig({
+  output: "static",
+  integrations: [solid()],
+  vite: { plugins: [tailwindcss()] },
+});
+"
+,
+      "path": "astro.config.ts",
+    },
+    {
+      "content": 
+"{
+  "$schema": "node_modules/@biomejs/biome/configuration_schema.json",
+  "extends": ["@gameroman/config/biome"],
+  "css": { "parser": { "tailwindDirectives": true } }
+}
+"
+,
+      "path": "biome.jsonc",
+    },
+    {
+      "content": 
+"{
+  "private": true,
+  "type": "module",
+  "imports": {
+    "#layout": "./src/layouts/Layout.astro",
+    "#styles": "./src/styles/global.css"
+  },
+  "scripts": {
+    "lint": "biome check",
+    "format": "biome check --fix",
+    "dev": "astro dev",
+    "build": "astro build",
+    "deploy": "wrangler deploy"
+  }
+}
+"
+,
+      "path": "package.json",
+    },
+    {
+      "content": 
+"/** @type {import('tailwindcss').Config} */
+export default {
+  content: { files: ["./src/**/*.{ts,tsx,astro}"] },
+};
+"
+,
+      "path": "tailwind.config.ts",
+    },
+    {
+      "content": 
+"{
+  "extends": "astro/tsconfigs/strictest",
+  "compilerOptions": {
+    "jsxImportSource": "solid-js",
+    "jsx": "preserve",
+    "types": ["bun"]
+  },
+  "include": [".astro/types.d.ts", "**/*"],
+  "exclude": ["dist"]
+}
+"
+,
+      "path": "tsconfig.json",
+    },
+  ],
+}
+`;

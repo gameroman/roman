@@ -83,7 +83,7 @@ dist/
   }
 }
 `,
-  packagejsonstailwind: `{
+  packagejsontailwind: `{
   "private": true,
   "type": "module",
   "imports": {
@@ -143,6 +143,16 @@ import { defineConfig } from "astro/config";
 export default defineConfig({
   output: "static",
   integrations: [solid()],
+});
+`,
+  astrosolidtailwind: `import solid from "@astrojs/solid-js";
+import tailwindcss from "@tailwindcss/vite";
+import { defineConfig } from "astro/config";
+
+export default defineConfig({
+  output: "static",
+  integrations: [solid()],
+  vite: { plugins: [tailwindcss()] },
 });
 `,
   tsconfigsolid: `{
@@ -299,7 +309,7 @@ describe("getScaffoldContent", () => {
           { path: ".gitignore", content: astroFiles.gitignore },
           { path: "astro.config.ts", content: astroFiles.astrotailwind },
           { path: "biome.jsonc", content: astroFiles.biometailwind },
-          { path: "package.json", content: astroFiles.packagejsonstailwind },
+          { path: "package.json", content: astroFiles.packagejsontailwind },
           { path: "tailwind.config.ts", content: astroFiles.tailwind },
           { path: "tsconfig.json", content: astroFiles.tsconfig },
         ],
@@ -336,6 +346,36 @@ describe("getScaffoldContent", () => {
             "@astrojs/solid-js",
             "@biomejs/biome",
             "@gameroman/config",
+            "typescript",
+            "wrangler",
+          ],
+        },
+      });
+      expect(content).toMatchSnapshot();
+    });
+
+    it("should generate astro template with solidjs and tailwindcss", () => {
+      const content = getScaffoldContent({
+        template: "astro",
+        features: ["biome", "solid", "tailwind", "wrangler"],
+      });
+      expect(content).toEqual({
+        files: [
+          { path: "src/styles/global.css", content: astroFiles.tailwindstyles },
+          { path: ".gitignore", content: astroFiles.gitignore },
+          { path: "astro.config.ts", content: astroFiles.astrosolidtailwind },
+          { path: "biome.jsonc", content: astroFiles.biometailwind },
+          { path: "package.json", content: astroFiles.packagejsontailwind },
+          { path: "tailwind.config.ts", content: astroFiles.tailwind },
+          { path: "tsconfig.json", content: astroFiles.tsconfigsolid },
+        ],
+        dependencies: {
+          default: ["astro", "solid-js", "tailwindcss"],
+          dev: [
+            "@astrojs/solid-js",
+            "@biomejs/biome",
+            "@gameroman/config",
+            "@tailwindcss/vite",
             "typescript",
             "wrangler",
           ],

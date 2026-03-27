@@ -1,9 +1,6 @@
 import { describe, it, expect } from "bun:test";
 
-import {
-  generateAstroConfig,
-  serializeAstroConfig,
-} from "#lib/astro-config";
+import { generateAstroConfig, serializeAstroConfig } from "#lib/astro-config";
 
 describe("generateAstroConfig", () => {
   it("should return static output by default", () => {
