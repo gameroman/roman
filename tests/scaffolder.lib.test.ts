@@ -83,6 +83,22 @@ dist/
   }
 }
 `,
+  packagejsonstailwind: `{
+  "private": true,
+  "type": "module",
+  "imports": {
+    "#layout": "./src/layouts/Layout.astro",
+    "#styles": "./src/styles/global.css"
+  },
+  "scripts": {
+    "lint": "biome check",
+    "format": "biome check --fix",
+    "dev": "astro dev",
+    "build": "astro build",
+    "deploy": "wrangler deploy"
+  }
+}
+`,
   tsconfig: `{
   "extends": "astro/tsconfigs/strictest",
   "include": [".astro/types.d.ts", "**/*"],
@@ -99,6 +115,8 @@ export default defineConfig({
   "$schema": "node_modules/@biomejs/biome/configuration_schema.json",
   "extends": ["@gameroman/config/biome"]
 }
+`,
+  tailwindstyles: `@import "tailwindcss";
 `,
   tailwind: `/** @type {import('tailwindcss').Config} */
 export default {
@@ -117,6 +135,24 @@ export default defineConfig({
   "$schema": "node_modules/@biomejs/biome/configuration_schema.json",
   "extends": ["@gameroman/config/biome"],
   "css": { "parser": { "tailwindDirectives": true } }
+}
+`,
+  astrosolid: `import solid from "@astrojs/solid-js";
+import { defineConfig } from "astro/config";
+
+export default defineConfig({
+  integrations: [solid()],
+});
+`,
+  tsconfigsolid: `{
+  "extends": "astro/tsconfigs/strictest",
+  "compilerOptions": {
+    "jsxImportSource": "solid-js",
+    "jsx": "preserve",
+    "types": ["bun"]
+  },
+  "include": [".astro/types.d.ts", "**/*"],
+  "exclude": ["dist"]
 }
 `,
 } as const;
@@ -258,10 +294,11 @@ describe("getScaffoldContent", () => {
       });
       expect(content).toEqual({
         files: [
+          { path: "src/styles/global.css", content: astroFiles.tailwindstyles },
           { path: ".gitignore", content: astroFiles.gitignore },
           { path: "astro.config.ts", content: astroFiles.astrotailwind },
           { path: "biome.jsonc", content: astroFiles.biometailwind },
-          { path: "package.json", content: astroFiles.packagejson },
+          { path: "package.json", content: astroFiles.packagejsonstailwind },
           { path: "tailwind.config.ts", content: astroFiles.tailwind },
           { path: "tsconfig.json", content: astroFiles.tsconfig },
         ],
@@ -271,6 +308,33 @@ describe("getScaffoldContent", () => {
             "@biomejs/biome",
             "@gameroman/config",
             "@tailwindcss/vite",
+            "typescript",
+            "wrangler",
+          ],
+        },
+      });
+      expect(content).toMatchSnapshot();
+    });
+
+    it("should generate astro template with solidjs", () => {
+      const content = getScaffoldContent({
+        template: "astro",
+        features: ["biome", "solid", "wrangler"],
+      });
+      expect(content).toEqual({
+        files: [
+          { path: ".gitignore", content: astroFiles.gitignore },
+          { path: "astro.config.ts", content: astroFiles.astrosolid },
+          { path: "biome.jsonc", content: astroFiles.biome },
+          { path: "package.json", content: astroFiles.packagejson },
+          { path: "tsconfig.json", content: astroFiles.tsconfigsolid },
+        ],
+        dependencies: {
+          default: ["astro", "solid-js"],
+          dev: [
+            "@astrojs/solid-js",
+            "@biomejs/biome",
+            "@gameroman/config",
             "typescript",
             "wrangler",
           ],
