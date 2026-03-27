@@ -394,6 +394,13 @@ exports[`getScaffoldContent astro template should generate astro template with t
   "files": [
     {
       "content": 
+"@import "tailwindcss";
+"
+,
+      "path": "src/styles/global.css",
+    },
+    {
+      "content": 
 "node_modules/
 
 dist/
@@ -434,7 +441,8 @@ export default defineConfig({
   "private": true,
   "type": "module",
   "imports": {
-    "#layout": "./src/layouts/Layout.astro"
+    "#layout": "./src/layouts/Layout.astro",
+    "#styles": "./src/styles/global.css"
   },
   "scripts": {
     "lint": "biome check",
@@ -462,6 +470,96 @@ export default {
       "content": 
 "{
   "extends": "astro/tsconfigs/strictest",
+  "include": [".astro/types.d.ts", "**/*"],
+  "exclude": ["dist"]
+}
+"
+,
+      "path": "tsconfig.json",
+    },
+  ],
+}
+`;
+
+exports[`getScaffoldContent astro template should generate astro template with solidjs 1`] = `
+{
+  "dependencies": {
+    "default": [
+      "astro",
+      "solid-js",
+    ],
+    "dev": [
+      "@astrojs/solid-js",
+      "@biomejs/biome",
+      "@gameroman/config",
+      "typescript",
+      "wrangler",
+    ],
+  },
+  "files": [
+    {
+      "content": 
+"node_modules/
+
+dist/
+
+.astro/
+.wrangler/
+"
+,
+      "path": ".gitignore",
+    },
+    {
+      "content": 
+"import solid from "@astrojs/solid-js";
+import { defineConfig } from "astro/config";
+
+export default defineConfig({
+  integrations: [solid()],
+});
+"
+,
+      "path": "astro.config.ts",
+    },
+    {
+      "content": 
+"{
+  "$schema": "node_modules/@biomejs/biome/configuration_schema.json",
+  "extends": ["@gameroman/config/biome"]
+}
+"
+,
+      "path": "biome.jsonc",
+    },
+    {
+      "content": 
+"{
+  "private": true,
+  "type": "module",
+  "imports": {
+    "#layout": "./src/layouts/Layout.astro"
+  },
+  "scripts": {
+    "lint": "biome check",
+    "format": "biome check --fix",
+    "dev": "astro dev",
+    "build": "astro build",
+    "deploy": "wrangler deploy"
+  }
+}
+"
+,
+      "path": "package.json",
+    },
+    {
+      "content": 
+"{
+  "extends": "astro/tsconfigs/strictest",
+  "compilerOptions": {
+    "jsxImportSource": "solid-js",
+    "jsx": "preserve",
+    "types": ["bun"]
+  },
   "include": [".astro/types.d.ts", "**/*"],
   "exclude": ["dist"]
 }

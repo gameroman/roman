@@ -40,6 +40,21 @@ const TSCONFIG_ASTRO = `{
 }
 `;
 
+const TSCONFIG_ASTRO_SOLID = `{
+  "extends": "astro/tsconfigs/strictest",
+  "compilerOptions": {
+    "jsxImportSource": "solid-js",
+    "jsx": "preserve",
+    "types": ["bun"]
+  },
+  "include": [".astro/types.d.ts", "**/*"],
+  "exclude": ["dist"]
+}
+`;
+
+const GLOBAL_CSS_TAILWIND = `@import "tailwindcss";
+`;
+
 type FileGenerator = (files: FileInfo[], config: ResolvedConfig) => void;
 
 const FEATURES: Partial<Record<Feature, FileGenerator>> = {
@@ -114,32 +129,57 @@ const TEMPLATES: Record<Template, TemplateGenerator> = {
   },
   astro(files, config) {
     files.push({ path: ".gitignore", content: GITIGNORE_ASTRO });
-    files.push({ path: "tsconfig.json", content: TSCONFIG_ASTRO });
+    const hasSolid = config.features?.includes("solid");
+    const hasTailwind = config.features?.includes("tailwind");
+    files.push({
+      path: "tsconfig.json",
+      content: hasSolid ? TSCONFIG_ASTRO_SOLID : TSCONFIG_ASTRO,
+    });
     const pkg = generatePackageJson(config);
+    if (hasTailwind) {
+      pkg.imports = pkg.imports ?? {};
+      pkg.imports["#styles"] = "./src/styles/global.css";
+    }
     files.push({
       path: "package.json",
       content: serializePackageJson(pkg),
     });
-    const hasTailwind = config.features?.includes("tailwind");
-    const astroContent = hasTailwind
-      ? `import tailwindcss from "@tailwindcss/vite";
-import { defineConfig } from "astro/config";
+    let astroContent = "";
+    if (hasSolid) {
+      astroContent += `import solid from "@astrojs/solid-js";
+`;
+    }
+    if (hasTailwind) {
+      astroContent += `import tailwindcss from "@tailwindcss/vite";
+`;
+    }
+    astroContent += `import { defineConfig } from "astro/config";
 
 export default defineConfig({
-  output: "static",
+`;
+    if (hasSolid && !hasTailwind) {
+      astroContent += `  integrations: [solid()],
+`;
+    } else if (hasTailwind) {
+      astroContent += `  output: "static",
   vite: { plugins: [tailwindcss()] },
-});
-`
-      : `import { defineConfig } from "astro/config";
-
-export default defineConfig({
-  output: "static",
-});
+`;
+    } else {
+      astroContent += `  output: "static",
+`;
+    }
+    astroContent += `});
 `;
     files.push({
       path: "astro.config.ts",
       content: astroContent,
     });
+    if (hasTailwind) {
+      files.push({
+        path: "src/styles/global.css",
+        content: GLOBAL_CSS_TAILWIND,
+      });
+    }
   },
 };
 
@@ -155,7 +195,13 @@ function getScaffoldContent(config: ResolvedConfig): ScaffoldContent {
     if (featureFn) featureFn(files, config);
   }
 
-  files.sort((a, b) => a.path.localeCompare(b.path));
+  files.sort((a, b) => {
+    const aIsDir = a.path.includes("/");
+    const bIsDir = b.path.includes("/");
+    if (aIsDir && !bIsDir) return -1;
+    if (!aIsDir && bIsDir) return 1;
+    return a.path.localeCompare(b.path);
+  });
 
   const defaultDeps = new Set<string>();
   const devDeps = new Set<string>(["@gameroman/config", "typescript"]);
