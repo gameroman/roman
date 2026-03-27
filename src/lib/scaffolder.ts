@@ -1,3 +1,4 @@
+import { generatePackageJson, serializePackageJson } from "./package-json";
 import type { ResolvedConfig, Dependencies } from "./resolver";
 
 interface FileInfo {
@@ -34,24 +35,7 @@ const TSCONFIG_ASTRO = `{
 }
 `;
 
-const PACKAGEJSON_ASTRO = `{
-  "type": "module",
-  "private": true,
-  "imports": {
-    "#layout": "./src/layouts/Layout.astro",
-    "#styles/*": "./src/styles/*.css"
-  },
-  "scripts": {
-    "lint": "biome check",
-    "format": "biome check --fix",
-    "dev": "astro dev",
-    "build": "astro build",
-    "deploy": "wrangler deploy"
-  }
-}
-`;
-
-type FileGenerator = (files: FileInfo[], features?: string[]) => void;
+type FileGenerator = (files: FileInfo[], config: ResolvedConfig) => void;
 
 const FEATURES: Record<string, FileGenerator> = {
   oxfmt: (files) => {
@@ -61,21 +45,14 @@ const FEATURES: Record<string, FileGenerator> = {
         'import { config } from "@gameroman/config/oxfmt";\n\nexport default config;\n',
     });
   },
-  oxlint: (files, features = []) => {
-    const isTypeaware = features.includes("tsgolint");
+  oxlint: (files, config) => {
+    const isTypeaware = config.features?.includes("tsgolint");
     files.push({
       path: "oxlint.config.ts",
       content: `import { config } from "@gameroman/config/oxlint${isTypeaware ? "/typeaware" : ""}";\n\nexport default config;\n`,
     });
   },
   tsgolint: (files) => {
-    const packageJson = files.find((f) => f.path === "package.json");
-    if (packageJson && !packageJson.content.includes('"lint":')) {
-      packageJson.content = packageJson.content.replace(
-        '"format": "oxfmt"',
-        '"lint": "oxlint",\n    "format": "oxfmt"',
-      );
-    }
     if (!files.some((f) => f.path === "oxlint.config.ts")) {
       files.push({
         path: "oxlint.config.ts",
@@ -99,36 +76,28 @@ const FEATURES: Record<string, FileGenerator> = {
   },
 };
 
-type TemplateGenerator = (files: FileInfo[], features: string[]) => void;
+type TemplateGenerator = (files: FileInfo[], config: ResolvedConfig) => void;
 
 const TEMPLATES: Record<string, TemplateGenerator> = {
-  default: (files, features) => {
+  default: (files, config) => {
     files.push({ path: ".gitignore", content: GITIGNORE_DEFAULT });
     files.push({ path: "tsconfig.json", content: TSCONFIG_DEFAULT });
-    const scripts: string[] = ['    "test": "bun test"'];
-    if (features.includes("oxlint")) scripts.push('    "lint": "oxlint"');
-    if (features.includes("oxfmt")) scripts.push('    "format": "oxfmt"');
-    if (features.includes("tsdown")) {
-      scripts.push(
-        '    "build": "tsdown"',
-        '    "prepublishOnly": "bun run build"',
-      );
-    }
+    const pkg = generatePackageJson(config);
     files.push({
       path: "package.json",
-      content: `{\n  "private": true,\n  "type": "module",\n  "scripts": {\n${scripts.join(",\n")}\n  }\n}\n`,
+      content: serializePackageJson(pkg),
     });
   },
-  executable: (files, features) => {
-    const defaultFn = TEMPLATES["default"];
-    if (defaultFn) defaultFn(files, features);
+  executable: (files, config) => {
+    TEMPLATES["default"]!(files, config);
   },
-  astro: (files, _features) => {
+  astro: (files, config) => {
     files.push({ path: ".gitignore", content: GITIGNORE_ASTRO });
     files.push({ path: "tsconfig.json", content: TSCONFIG_ASTRO });
+    const pkg = generatePackageJson(config);
     files.push({
       path: "package.json",
-      content: PACKAGEJSON_ASTRO,
+      content: serializePackageJson(pkg),
     });
     files.push({
       path: "astro.config.ts",
@@ -143,11 +112,11 @@ function getScaffoldContent(config: ResolvedConfig): ScaffoldContent {
   const features = config.features ?? [];
 
   const templateFn = TEMPLATES[config.template];
-  if (templateFn) templateFn(files, features);
+  if (templateFn) templateFn(files, config);
 
   for (const feature of features) {
     const featureFn = FEATURES[feature];
-    if (featureFn) featureFn(files, features);
+    if (featureFn) featureFn(files, config);
   }
 
   files.sort((a, b) => a.path.localeCompare(b.path));

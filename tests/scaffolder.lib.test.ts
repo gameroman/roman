@@ -69,8 +69,8 @@ dist/
 .wrangler/
 `,
   packagejson: `{
-  "type": "module",
   "private": true,
+  "type": "module",
   "imports": {
     "#layout": "./src/layouts/Layout.astro",
     "#styles/*": "./src/styles/*.css"
