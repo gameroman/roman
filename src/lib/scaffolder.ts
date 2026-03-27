@@ -1,4 +1,5 @@
 import { generatePackageJson, serializePackageJson } from "./package-json";
+import { generateAstroConfig, serializeAstroConfig } from "./astro-config";
 import type {
   ResolvedConfig,
   Dependencies,
@@ -144,33 +145,8 @@ const TEMPLATES: Record<Template, TemplateGenerator> = {
       path: "package.json",
       content: serializePackageJson(pkg),
     });
-    let astroContent = "";
-    if (hasSolid) {
-      astroContent += `import solid from "@astrojs/solid-js";
-`;
-    }
-    if (hasTailwind) {
-      astroContent += `import tailwindcss from "@tailwindcss/vite";
-`;
-    }
-    astroContent += `import { defineConfig } from "astro/config";
-
-export default defineConfig({
-`;
-    if (hasSolid && !hasTailwind) {
-      astroContent += `  output: "static",
-  integrations: [solid()],
-`;
-    } else if (hasTailwind) {
-      astroContent += `  output: "static",
-  vite: { plugins: [tailwindcss()] },
-`;
-    } else {
-      astroContent += `  output: "static",
-`;
-    }
-    astroContent += `});
-`;
+    const astroOptions = generateAstroConfig(config);
+    const astroContent = serializeAstroConfig(astroOptions);
     files.push({
       path: "astro.config.ts",
       content: astroContent,

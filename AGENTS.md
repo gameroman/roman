@@ -4,6 +4,7 @@
 
 ```sh
 # Lint and typecheck
+# Never run `tsc` for typechecking, use `bun lint` instead
 bun lint
 
 # Format code
