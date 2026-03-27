@@ -46,9 +46,7 @@ function resolveConfig(args: string[]): ResolvedConfig {
   }
 
   if (template === "default" || template === "executable") {
-    features.add("oxfmt");
-    features.add("oxlint");
-    features.add("tsgolint");
+    features.add("oxfmt").add("oxlint").add("tsgolint");
   }
 
   if (template === "astro") {

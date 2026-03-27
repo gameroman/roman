@@ -177,8 +177,7 @@ function getScaffoldContent(config: ResolvedConfig): ScaffoldContent {
     } else if (feature === "oxlint") {
       devDeps.add("oxlint");
     } else if (feature === "tsgolint") {
-      devDeps.add("oxlint");
-      devDeps.add("oxlint-tsgolint");
+      devDeps.add("oxlint").add("oxlint-tsgolint");
     }
   }
 

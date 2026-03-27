@@ -1,7 +1,10 @@
 import { defineConfig } from "tsdown";
 
 export default defineConfig({
-  exports: true,
+  exports: {
+    enabled: true,
+    bin: { roman: "./src/index.ts" },
+  },
   deps: {
     neverBundle: ["bun"],
   },
