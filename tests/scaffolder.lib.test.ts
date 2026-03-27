@@ -100,6 +100,25 @@ export default defineConfig({
   "extends": ["@gameroman/config/biome"]
 }
 `,
+  tailwind: `/** @type {import('tailwindcss').Config} */
+export default {
+  content: { files: ["./src/**/*.{ts,tsx,astro}"] },
+};
+`,
+  astrotailwind: `import tailwindcss from "@tailwindcss/vite";
+import { defineConfig } from "astro/config";
+
+export default defineConfig({
+  output: "static",
+  vite: { plugins: [tailwindcss()] },
+});
+`,
+  biometailwind: `{
+  "$schema": "node_modules/@biomejs/biome/configuration_schema.json",
+  "extends": ["@gameroman/config/biome"],
+  "css": { "parser": { "tailwindDirectives": true } }
+}
+`,
 } as const;
 
 describe("getScaffoldContent", () => {
@@ -223,6 +242,34 @@ describe("getScaffoldContent", () => {
           default: ["astro"],
           dev: [
             "@biomejs/biome",
+            "@gameroman/config",
+            "typescript",
+            "wrangler",
+          ],
+        },
+      });
+      expect(content).toMatchSnapshot();
+    });
+
+    it("should generate astro template with tailwindcss", () => {
+      const content = getScaffoldContent({
+        template: "astro",
+        features: ["biome", "tailwind", "wrangler"],
+      });
+      expect(content).toEqual({
+        files: [
+          { path: ".gitignore", content: astroFiles.gitignore },
+          { path: "astro.config.ts", content: astroFiles.astrotailwind },
+          { path: "biome.jsonc", content: astroFiles.biometailwind },
+          { path: "package.json", content: astroFiles.packagejson },
+          { path: "tailwind.config.ts", content: astroFiles.tailwind },
+          { path: "tsconfig.json", content: astroFiles.tsconfig },
+        ],
+        dependencies: {
+          default: ["astro", "tailwindcss"],
+          dev: [
+            "@biomejs/biome",
+            "@tailwindcss/vite",
             "@gameroman/config",
             "typescript",
             "wrangler",
