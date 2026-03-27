@@ -7,6 +7,10 @@ function writeToFs(
   content: ScaffoldContent,
   targetDir: string = process.cwd(),
 ) {
+  if (!fs.existsSync(targetDir)) {
+    fs.mkdirSync(targetDir, { recursive: true });
+  }
+
   const files = fs.readdirSync(targetDir);
 
   if (files.length > 0) {
