@@ -72,8 +72,7 @@ dist/
   "private": true,
   "type": "module",
   "imports": {
-    "#layout": "./src/layouts/Layout.astro",
-    "#styles/*": "./src/styles/*.css"
+    "#layout": "./src/layouts/Layout.astro"
   },
   "scripts": {
     "lint": "biome check",

@@ -40,7 +40,6 @@ function generatePackageJson(config: ResolvedConfig): PackageJson {
   if (template === "astro") {
     base.imports = {
       "#layout": "./src/layouts/Layout.astro",
-      "#styles/*": "./src/styles/*.css",
     };
   }
 

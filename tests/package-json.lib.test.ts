@@ -102,7 +102,6 @@ describe("generatePackageJson", () => {
       });
       expect(pkg.imports).toEqual({
         "#layout": "./src/layouts/Layout.astro",
-        "#styles/*": "./src/styles/*.css",
       });
     });
   });
