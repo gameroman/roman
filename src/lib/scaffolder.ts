@@ -158,7 +158,8 @@ const TEMPLATES: Record<Template, TemplateGenerator> = {
 export default defineConfig({
 `;
     if (hasSolid && !hasTailwind) {
-      astroContent += `  integrations: [solid()],
+      astroContent += `  output: "static",
+  integrations: [solid()],
 `;
     } else if (hasTailwind) {
       astroContent += `  output: "static",
