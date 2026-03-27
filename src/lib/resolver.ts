@@ -61,4 +61,4 @@ function resolveConfig(args: string[]): ResolvedConfig {
 }
 
 export { resolveConfig };
-export type { Dependencies, ResolvedConfig, Feature };
+export type { Dependencies, ResolvedConfig, Feature, Template };

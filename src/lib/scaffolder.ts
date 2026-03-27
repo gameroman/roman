@@ -1,5 +1,10 @@
 import { generatePackageJson, serializePackageJson } from "./package-json";
-import type { ResolvedConfig, Dependencies } from "./resolver";
+import type {
+  ResolvedConfig,
+  Dependencies,
+  Feature,
+  Template,
+} from "./resolver";
 
 interface FileInfo {
   path: string;
@@ -37,22 +42,22 @@ const TSCONFIG_ASTRO = `{
 
 type FileGenerator = (files: FileInfo[], config: ResolvedConfig) => void;
 
-const FEATURES: Record<string, FileGenerator> = {
-  oxfmt: (files) => {
+const FEATURES: Partial<Record<Feature, FileGenerator>> = {
+  oxfmt(files) {
     files.push({
       path: "oxfmt.config.ts",
       content:
         'import { config } from "@gameroman/config/oxfmt";\n\nexport default config;\n',
     });
   },
-  oxlint: (files, config) => {
+  oxlint(files, config) {
     const isTypeaware = config.features?.includes("tsgolint");
     files.push({
       path: "oxlint.config.ts",
       content: `import { config } from "@gameroman/config/oxlint${isTypeaware ? "/typeaware" : ""}";\n\nexport default config;\n`,
     });
   },
-  tsgolint: (files) => {
+  tsgolint(files) {
     if (!files.some((f) => f.path === "oxlint.config.ts")) {
       files.push({
         path: "oxlint.config.ts",
@@ -61,14 +66,14 @@ const FEATURES: Record<string, FileGenerator> = {
       });
     }
   },
-  tsdown: (files) => {
+  tsdown(files) {
     files.push({
       path: "tsdown.config.ts",
       content:
         'import { defineConfig } from "tsdown";\n\nexport default defineConfig({\n  dts: true,\n  exports: true,\n});\n',
     });
   },
-  biome: (files, config) => {
+  biome(files, config) {
     const hasTailwind = config.features?.includes("tailwind");
     const biomeContent = hasTailwind
       ? `{
@@ -83,7 +88,7 @@ const FEATURES: Record<string, FileGenerator> = {
       content: biomeContent,
     });
   },
-  tailwind: (files) => {
+  tailwind(files) {
     files.push({
       path: "tailwind.config.ts",
       content:
@@ -94,8 +99,8 @@ const FEATURES: Record<string, FileGenerator> = {
 
 type TemplateGenerator = (files: FileInfo[], config: ResolvedConfig) => void;
 
-const TEMPLATES: Record<string, TemplateGenerator> = {
-  default: (files, config) => {
+const TEMPLATES: Record<Template, TemplateGenerator> = {
+  default(files, config) {
     files.push({ path: ".gitignore", content: GITIGNORE_DEFAULT });
     files.push({ path: "tsconfig.json", content: TSCONFIG_DEFAULT });
     const pkg = generatePackageJson(config);
@@ -104,10 +109,10 @@ const TEMPLATES: Record<string, TemplateGenerator> = {
       content: serializePackageJson(pkg),
     });
   },
-  executable: (files, config) => {
-    TEMPLATES["default"]!(files, config);
+  executable(files, config) {
+    TEMPLATES.default(files, config);
   },
-  astro: (files, config) => {
+  astro(files, config) {
     files.push({ path: ".gitignore", content: GITIGNORE_ASTRO });
     files.push({ path: "tsconfig.json", content: TSCONFIG_ASTRO });
     const pkg = generatePackageJson(config);
@@ -143,7 +148,7 @@ function getScaffoldContent(config: ResolvedConfig): ScaffoldContent {
   const features = config.features ?? [];
 
   const templateFn = TEMPLATES[config.template];
-  if (templateFn) templateFn(files, config);
+  templateFn(files, config);
 
   for (const feature of features) {
     const featureFn = FEATURES[feature];
