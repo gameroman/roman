@@ -18,9 +18,22 @@ function generateAstroConfig(config: ResolvedConfig): AstroConfigOptions {
   };
 }
 
+function buildConfigSection(options: AstroConfigOptions): string {
+  const lines = [`  output: "${options.output}",`];
+
+  if (options.integrations.length > 0) {
+    lines.push(`  integrations: [${options.integrations.join(", ")}],`);
+  }
+
+  if (options.vitePlugins.length > 0) {
+    lines.push(`  vite: { plugins: [${options.vitePlugins.join(", ")}] },`);
+  }
+
+  return lines.join("\n");
+}
+
 function serializeAstroConfig(options: AstroConfigOptions): string {
   const imports: string[] = [];
-  const lines: string[] = [];
 
   if (options.integrations.some((i) => i.includes("solid"))) {
     imports.push('import solid from "@astrojs/solid-js";');
@@ -31,35 +44,14 @@ function serializeAstroConfig(options: AstroConfigOptions): string {
 
   imports.push('import { defineConfig } from "astro/config";');
 
-  lines.push("");
-  lines.push("export default defineConfig({");
+  const configSection = buildConfigSection(options);
 
-  const configLines: string[] = [];
-  configLines.push(`  output: "${options.output}",`);
+  return `${imports.join("\n")}
 
-  if (options.integrations.length > 0) {
-    configLines.push(`  integrations: [${options.integrations.join(", ")}],`);
-  }
-
-  if (options.vitePlugins.length > 0) {
-    configLines.push(
-      `  vite: { plugins: [${options.vitePlugins.join(", ")}] },`
-    );
-  }
-
-  lines.push(configLines.join("\n"));
-  lines.push("});");
-  lines.push("");
-
-  const importSection = imports.join("\n");
-  const configSection = lines.join("\n");
-
-  if (imports.length > 1) {
-    return `${importSection}
-${configSection}`;
-  }
-  return `${importSection}
-${configSection}`;
+export default defineConfig({
+${configSection}
+});
+`;
 }
 
 export { generateAstroConfig, serializeAstroConfig };
