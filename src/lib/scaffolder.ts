@@ -68,10 +68,26 @@ const FEATURES: Record<string, FileGenerator> = {
         'import { defineConfig } from "tsdown";\n\nexport default defineConfig({\n  dts: true,\n  exports: true,\n});\n',
     });
   },
-  biome: (files) => {
+  biome: (files, config) => {
+    const hasTailwind = config.features?.includes("tailwind");
+    const biomeContent = hasTailwind
+      ? `{
+  "$schema": "node_modules/@biomejs/biome/configuration_schema.json",
+  "extends": ["@gameroman/config/biome"],
+  "css": { "parser": { "tailwindDirectives": true } }
+}
+`
+      : BIOME_ASTRO;
     files.push({
       path: "biome.jsonc",
-      content: BIOME_ASTRO,
+      content: biomeContent,
+    });
+  },
+  tailwind: (files) => {
+    files.push({
+      path: "tailwind.config.ts",
+      content:
+        "/** @type {import('tailwindcss').Config} */\nexport default {\n  content: { files: [\"./src/**/*.{ts,tsx,astro}\"] },\n};\n",
     });
   },
 };
@@ -99,10 +115,25 @@ const TEMPLATES: Record<string, TemplateGenerator> = {
       path: "package.json",
       content: serializePackageJson(pkg),
     });
+    const hasTailwind = config.features?.includes("tailwind");
+    const astroContent = hasTailwind
+      ? `import tailwindcss from "@tailwindcss/vite";
+import { defineConfig } from "astro/config";
+
+export default defineConfig({
+  output: "static",
+  vite: { plugins: [tailwindcss()] },
+});
+`
+      : `import { defineConfig } from "astro/config";
+
+export default defineConfig({
+  output: "static",
+});
+`;
     files.push({
       path: "astro.config.ts",
-      content:
-        'import { defineConfig } from "astro/config";\n\nexport default defineConfig({\n  output: "static",\n});\n',
+      content: astroContent,
     });
   },
 };

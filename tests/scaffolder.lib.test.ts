@@ -269,8 +269,8 @@ describe("getScaffoldContent", () => {
           default: ["astro", "tailwindcss"],
           dev: [
             "@biomejs/biome",
-            "@tailwindcss/vite",
             "@gameroman/config",
+            "@tailwindcss/vite",
             "typescript",
             "wrangler",
           ],
