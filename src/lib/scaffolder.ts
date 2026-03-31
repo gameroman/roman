@@ -188,24 +188,41 @@ function getScaffoldContent(config: ResolvedConfig): ScaffoldContent {
   }
 
   for (const feature of features) {
-    if (feature === "tailwind") {
-      defaultDeps.add("tailwindcss");
-      devDeps.add("@tailwindcss/vite");
-    } else if (feature === "solid") {
-      defaultDeps.add("solid-js");
-      devDeps.add("@astrojs/solid-js");
-    } else if (feature === "tsdown") {
-      devDeps.add("tsdown");
-    } else if (feature === "wrangler") {
-      devDeps.add("wrangler");
-    } else if (feature === "biome") {
-      devDeps.add("@biomejs/biome");
-    } else if (feature === "oxfmt") {
-      devDeps.add("oxfmt");
-    } else if (feature === "oxlint") {
-      devDeps.add("oxlint");
-    } else if (feature === "tsgolint") {
-      devDeps.add("oxlint").add("oxlint-tsgolint");
+    switch (feature) {
+      case "tailwind": {
+        defaultDeps.add("tailwindcss");
+        devDeps.add("@tailwindcss/vite");
+        continue;
+      }
+      case "solid": {
+        defaultDeps.add("solid-js");
+        devDeps.add("@astrojs/solid-js");
+        continue;
+      }
+      case "tsdown": {
+        devDeps.add("tsdown");
+        continue;
+      }
+      case "wrangler": {
+        devDeps.add("wrangler");
+        continue;
+      }
+      case "biome": {
+        devDeps.add("@biomejs/biome");
+        continue;
+      }
+      case "oxfmt": {
+        devDeps.add("oxfmt");
+        continue;
+      }
+      case "oxlint": {
+        devDeps.add("oxlint");
+        continue;
+      }
+      case "tsgolint": {
+        devDeps.add("oxlint").add("oxlint-tsgolint");
+        continue;
+      }
     }
   }
 

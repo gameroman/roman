@@ -70,5 +70,12 @@ describe("resolveConfig", () => {
         features: ["biome", "solid", "tailwind", "wrangler"],
       });
     });
+
+    it("should resolve astro tailwind solid", () => {
+      expect(resolveConfig(["astro", "solid", "tailwind"])).toEqual({
+        template: "astro",
+        features: ["biome", "solid", "tailwind", "wrangler"],
+      });
+    });
   });
 });

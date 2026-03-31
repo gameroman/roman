@@ -22,7 +22,7 @@ const TEMPLATE_SCRIPTS: Record<string, Record<string, string | undefined>> = {
 };
 
 function generatePackageJson(config: ResolvedConfig): PackageJson {
-  const template = config.template ?? "default";
+  const template = config.template;
   const features = config.features ?? [];
 
   const templateScripts = TEMPLATE_SCRIPTS[template] ?? {};
@@ -72,19 +72,18 @@ function serializePackageJson(pkg: PackageJson): string {
 
   for (const key of keys) {
     const value = pkg[key];
-    if (value !== undefined) {
-      if (typeof value === "object" && value !== null) {
-        const serialized = JSON.stringify(value, null, 2);
-        const lines = serialized.split("\n");
-        const body = lines.slice(1, -1).join("\n");
-        const indentedBody = body
-          .split("\n")
-          .map((line) => `  ${line}`)
-          .join("\n");
-        parts.push(`  "${key}": {\n${indentedBody}\n  }`);
-      } else {
-        parts.push(`  "${key}": ${JSON.stringify(value)}`);
-      }
+    if (value === undefined) continue;
+    if (typeof value === "object") {
+      const serialized = JSON.stringify(value, null, 2);
+      const lines = serialized.split("\n");
+      const body = lines.slice(1, -1).join("\n");
+      const indentedBody = body
+        .split("\n")
+        .map((line) => `  ${line}`)
+        .join("\n");
+      parts.push(`  "${key}": {\n${indentedBody}\n  }`);
+    } else {
+      parts.push(`  "${key}": ${JSON.stringify(value)}`);
     }
   }
 
