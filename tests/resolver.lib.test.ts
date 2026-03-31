@@ -72,7 +72,7 @@ describe("resolveConfig", () => {
     });
 
     it("should resolve astro tailwind solid", () => {
-      expect(resolveConfig(["astro", "solid", "tailwind"])).toEqual({
+      expect(resolveConfig(["astro", "tailwind", "solid"])).toEqual({
         template: "astro",
         features: ["biome", "solid", "tailwind", "wrangler"],
       });

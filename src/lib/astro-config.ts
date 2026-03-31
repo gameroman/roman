@@ -1,7 +1,7 @@
 import type { ResolvedConfig } from "./resolver";
 
 interface AstroConfigOptions {
-  output: "static" | "server" | "hybrid";
+  output: "static" | "server";
   integrations: string[];
   vitePlugins: string[];
 }
