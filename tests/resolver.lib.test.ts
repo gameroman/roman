@@ -42,6 +42,20 @@ describe("resolveConfig", () => {
         features: ["oxfmt", "oxlint", "tsgolint"],
       });
     });
+
+    it("should resolve exe tg", () => {
+      expect(resolveConfig(["exe", "tg"])).toEqual({
+        template: "executable",
+        features: ["oxfmt", "oxlint", "telegram", "tsgolint"],
+      });
+    });
+
+    it("should resolve tg", () => {
+      expect(resolveConfig(["tg"])).toEqual({
+        template: "executable",
+        features: ["oxfmt", "oxlint", "telegram", "tsgolint"],
+      });
+    });
   });
 
   describe("astro template", () => {

@@ -8,7 +8,8 @@ type Feature =
   | "solid"
   | "tailwind"
   | "wrangler"
-  | "tsdown";
+  | "tsdown"
+  | "telegram";
 
 interface ResolvedConfig {
   template: Template;
@@ -18,7 +19,7 @@ interface ResolvedConfig {
 function getTemplate(args: string[]) {
   return args.includes("astro") || args.includes("solid")
     ? "astro"
-    : args.includes("exe")
+    : args.includes("exe") || args.includes("tg")
       ? "executable"
       : args.includes("lib")
         ? "lib"
@@ -33,6 +34,9 @@ function resolveConfig(args: string[]): ResolvedConfig {
   for (const arg of args) {
     if (arg === "solid") {
       features.add("solid");
+    }
+    if (arg === "tg") {
+      features.add("telegram");
     }
   }
 
