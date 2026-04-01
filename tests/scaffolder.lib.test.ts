@@ -275,6 +275,19 @@ const { title, description } = Astro.props;
   </body>
 </html>
 `,
+  pagetailwind: `---
+import Layout from "#layout";
+
+const title = "title";
+const description = "description";
+---
+
+<Layout {title} {description}>
+  <main class="container mx-auto p-4">
+    <h1 class="text-2xl font-bold mb-4">App</h1>
+  </main>
+</Layout>
+`,
   pagesolidtailwind: `---
 import App from "#app";
 import Layout from "#layout";
@@ -456,6 +469,7 @@ describe("getScaffoldContent", () => {
             path: "src/layouts/Layout.astro",
             content: astroFiles.layouttailwind,
           },
+          { path: "src/pages/index.astro", content: astroFiles.pagetailwind },
           { path: "src/styles/global.css", content: astroFiles.tailwindstyles },
           { path: ".gitignore", content: astroFiles.gitignore },
           { path: "astro.config.ts", content: astroFiles.astrotailwind },

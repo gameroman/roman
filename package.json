@@ -22,8 +22,9 @@
   },
   "scripts": {
     "u": "bun run --sequential format lint build test",
-    "test": "bun run --sequential test:check test:update",
-    "test:check": "SKIP_SNAPSHOTS=1 bun test --dots",
+    "test": "bun test --dots",
+    "test:run": "bun run --sequential test:check test:update",
+    "test:check": "SKIP_SNAPSHOTS=1 bun run test",
     "test:update": "bun test --dots -u",
     "lint": "oxlint",
     "format": "oxfmt",
