@@ -36,7 +36,6 @@ function resolveConfig(args: string[]): ResolvedConfig {
   for (const arg of args) {
     if (arg === "astro") {
       features.add("biome");
-    } else if (arg === "tailwind") {
       features.add("tailwind");
     } else if (arg === "solid") {
       features.add("solid");

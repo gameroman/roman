@@ -166,6 +166,49 @@ export default defineConfig({
   "exclude": ["dist"]
 }
 `,
+  layouttailwind: `---
+import "#styles";
+
+interface Props {
+  title: string;
+  description: string;
+  children: unknown;
+}
+
+const canonical = Astro.site
+  ? new URL(Astro.url.pathname, Astro.site)
+  : undefined;
+
+const { title, description } = Astro.props;
+---
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="referrer" content="no-referrer-when-downgrade" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+
+    <link rel="canonical" href={canonical} />
+  </head>
+
+  <body>
+    <slot />
+  </body>
+</html>
+`,
 } as const;
 
 describe("getScaffoldContent", () => {
@@ -305,6 +348,10 @@ describe("getScaffoldContent", () => {
       });
       expect(content).toEqual({
         files: [
+          {
+            path: "src/layouts/Layout.astro",
+            content: astroFiles.layouttailwind,
+          },
           { path: "src/styles/global.css", content: astroFiles.tailwindstyles },
           { path: ".gitignore", content: astroFiles.gitignore },
           { path: "astro.config.ts", content: astroFiles.astrotailwind },
@@ -361,6 +408,10 @@ describe("getScaffoldContent", () => {
       });
       expect(content).toEqual({
         files: [
+          {
+            path: "src/layouts/Layout.astro",
+            content: astroFiles.layouttailwind,
+          },
           { path: "src/styles/global.css", content: astroFiles.tailwindstyles },
           { path: ".gitignore", content: astroFiles.gitignore },
           { path: "astro.config.ts", content: astroFiles.astrosolidtailwind },

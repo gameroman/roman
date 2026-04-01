@@ -46,33 +46,12 @@ describe("resolveConfig", () => {
     it("should resolve astro", () => {
       expect(resolveConfig(["astro"])).toEqual({
         template: "astro",
-        features: ["biome", "wrangler"],
-      });
-    });
-
-    it("should resolve astro tailwind", () => {
-      expect(resolveConfig(["astro", "tailwind"])).toEqual({
-        template: "astro",
         features: ["biome", "tailwind", "wrangler"],
       });
     });
 
     it("should resolve astro solid", () => {
       expect(resolveConfig(["astro", "solid"])).toEqual({
-        template: "astro",
-        features: ["biome", "solid", "wrangler"],
-      });
-    });
-
-    it("should resolve astro solid tailwind", () => {
-      expect(resolveConfig(["astro", "solid", "tailwind"])).toEqual({
-        template: "astro",
-        features: ["biome", "solid", "tailwind", "wrangler"],
-      });
-    });
-
-    it("should resolve astro tailwind solid", () => {
-      expect(resolveConfig(["astro", "tailwind", "solid"])).toEqual({
         template: "astro",
         features: ["biome", "solid", "tailwind", "wrangler"],
       });
