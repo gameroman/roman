@@ -68,6 +68,21 @@ export default defineConfig({
 `,
 } as const;
 
+const exeFiles = {
+  packagejson: `{
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "bun test",
+    "lint": "oxlint",
+    "format": "oxfmt",
+    "dev": "NODE_ENV=development bun run ./src/index.ts",
+    "build": "NODE_ENV=production bun build --minify --compile ./src/index.ts --outfile=dist/bot --target=bun-linux-arm64"
+  }
+}
+`,
+} as const;
+
 const astroFiles = {
   gitignore: `node_modules/
 
@@ -422,6 +437,34 @@ describe("getScaffoldContent", () => {
             "oxlint",
             "oxlint-tsgolint",
             "tsdown",
+            "typescript",
+          ],
+        },
+      });
+      if (!SKIP_SNAPHOTS) expect(content).toMatchSnapshot();
+    });
+  });
+
+  describe("exe template", () => {
+    it("should generate basic files for exe template", () => {
+      const content = getScaffoldContent({
+        template: "executable",
+        features: ["oxfmt", "oxlint", "tsgolint"],
+      });
+      expect(content).toEqual({
+        files: [
+          { path: ".gitignore", content: defaultFiles.gitignore },
+          { path: "oxfmt.config.ts", content: defaultFiles.oxfmt },
+          { path: "oxlint.config.ts", content: defaultFiles.tsgolint },
+          { path: "package.json", content: exeFiles.packagejson },
+          { path: "tsconfig.json", content: defaultFiles.tsconfig },
+        ],
+        dependencies: {
+          dev: [
+            "@gameroman/config",
+            "oxfmt",
+            "oxlint",
+            "oxlint-tsgolint",
             "typescript",
           ],
         },
