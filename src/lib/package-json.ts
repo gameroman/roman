@@ -1,4 +1,5 @@
 import type { ResolvedConfig, Template } from "./resolver";
+import { sortKeys } from "./sort-keys";
 
 interface PackageJsonImports {
   [key: string]: string;
@@ -79,15 +80,6 @@ function generatePackageJson(config: ResolvedConfig): PackageJson {
   }
 
   return packageJson;
-}
-
-function sortKeys<T>(obj: Record<string, T>) {
-  return Object.keys(obj)
-    .toSorted()
-    .reduce<Record<string, T>>((acc, k) => {
-      acc[k] = obj[k] as T;
-      return acc;
-    }, {});
 }
 
 function serializePackageJson(pkg: PackageJson): string {

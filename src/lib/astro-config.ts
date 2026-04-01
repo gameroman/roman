@@ -1,4 +1,5 @@
-import type { ResolvedConfig } from "./resolver";
+import type { Feature, ResolvedConfig } from "./resolver";
+import { sortKeys } from "./sort-keys";
 
 interface AstroConfigOptions {
   output: "static" | "server";
@@ -37,21 +38,32 @@ function buildConfigSection(options: AstroConfigOptions): string {
   return lines.join("\n");
 }
 
-function serializeAstroConfig(options: AstroConfigOptions): string {
-  const imports: string[] = [];
+type JsImports = Record<string, string>;
 
-  if (options.integrations.some((i) => i.includes("solid"))) {
-    imports.push('import solid from "@astrojs/solid-js";');
-  }
-  if (options.vitePlugins.some((p) => p.includes("tailwind"))) {
-    imports.push('import tailwindcss from "@tailwindcss/vite";');
-  }
+function parseImports(imports: JsImports) {
+  return Object.entries(sortKeys(imports))
+    .map(([key, value]) => `import ${key} from "${value}";`)
+    .join("\n");
+}
 
-  imports.push('import { defineConfig } from "astro/config";');
+function serializeAstroConfig(
+  options: AstroConfigOptions,
+  features: Feature[],
+): string {
+  const imports: JsImports = {
+    "{ defineConfig }": "astro/config",
+  };
+
+  if (features.includes("solid")) {
+    imports["solid"] = "@astrojs/solid-js";
+  }
+  if (features.includes("tailwind")) {
+    imports["tailwindcss"] = "@tailwindcss/vite";
+  }
 
   const configSection = buildConfigSection(options);
 
-  return `${imports.join("\n")}
+  return `${parseImports(imports)}
 
 export default defineConfig({
 ${configSection}
