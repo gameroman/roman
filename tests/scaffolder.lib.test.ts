@@ -2,6 +2,7 @@ import { describe, it, expect } from "bun:test";
 
 import { getScaffoldContent } from "#lib/scaffolder";
 
+// #region files
 const defaultFiles = {
   gitignore: `node_modules/
 
@@ -38,7 +39,7 @@ export default config;
 `,
 } as const;
 
-const tsdownFiles = {
+const libFiles = {
   tsdown: `import { defineConfig } from "tsdown";
 
 export default defineConfig({
@@ -46,8 +47,15 @@ export default defineConfig({
   exports: true,
 });
 `,
+  tsconfig: `{
+  "extends": "@gameroman/config/tsconfig/isolated",
+  "compilerOptions": {
+    "types": ["bun"]
+  }
+}
+`,
   packagejson: `{
-  "private": true,
+  "name": "",
   "type": "module",
   "scripts": {
     "test": "bun test",
@@ -83,6 +91,39 @@ dist/
   }
 }
 `,
+  packagejsontailwind: `{
+  "private": true,
+  "type": "module",
+  "imports": {
+    "#layout": "./src/layouts/Layout.astro",
+    "#styles": "./src/styles/global.css"
+  },
+  "scripts": {
+    "lint": "biome check",
+    "format": "biome check --fix",
+    "dev": "astro dev",
+    "build": "astro build",
+    "deploy": "wrangler deploy"
+  }
+}
+`,
+  packagejsonsolidtailwind: `{
+  "private": true,
+  "type": "module",
+  "imports": {
+    "#app": "./src/components/App.tsx",
+    "#layout": "./src/layouts/Layout.astro",
+    "#styles": "./src/styles/global.css"
+  },
+  "scripts": {
+    "lint": "biome check",
+    "format": "biome check --fix",
+    "dev": "astro dev",
+    "build": "astro build",
+    "deploy": "wrangler deploy"
+  }
+}
+`,
   tsconfig: `{
   "extends": "astro/tsconfigs/strictest",
   "include": [".astro/types.d.ts", "**/*"],
@@ -99,6 +140,8 @@ export default defineConfig({
   "$schema": "node_modules/@biomejs/biome/configuration_schema.json",
   "extends": ["@gameroman/config/biome"]
 }
+`,
+  tailwindstyles: `@import "tailwindcss";
 `,
   tailwind: `/** @type {import('tailwindcss').Config} */
 export default {
@@ -119,7 +162,168 @@ export default defineConfig({
   "css": { "parser": { "tailwindDirectives": true } }
 }
 `,
+  astrosolid: `import solid from "@astrojs/solid-js";
+import { defineConfig } from "astro/config";
+
+export default defineConfig({
+  output: "static",
+  integrations: [solid()],
+});
+`,
+  astrosolidtailwind: `import solid from "@astrojs/solid-js";
+import tailwindcss from "@tailwindcss/vite";
+import { defineConfig } from "astro/config";
+
+export default defineConfig({
+  output: "static",
+  integrations: [solid()],
+  vite: { plugins: [tailwindcss()] },
+});
+`,
+  tsconfigsolid: `{
+  "extends": "astro/tsconfigs/strictest",
+  "compilerOptions": {
+    "jsxImportSource": "solid-js",
+    "jsx": "preserve",
+    "types": ["bun"]
+  },
+  "include": [".astro/types.d.ts", "**/*"],
+  "exclude": ["dist"]
+}
+`,
+  layout: `---
+interface Props {
+  title: string;
+  description: string;
+  children: unknown;
+}
+
+const canonical = Astro.site
+  ? new URL(Astro.url.pathname, Astro.site)
+  : undefined;
+
+const { title, description } = Astro.props;
+---
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="referrer" content="no-referrer-when-downgrade" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+
+    <link rel="canonical" href={canonical} />
+  </head>
+
+  <body>
+    <slot />
+  </body>
+</html>
+`,
+  layouttailwind: `---
+import "#styles";
+
+interface Props {
+  title: string;
+  description: string;
+  children: unknown;
+}
+
+const canonical = Astro.site
+  ? new URL(Astro.url.pathname, Astro.site)
+  : undefined;
+
+const { title, description } = Astro.props;
+---
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="referrer" content="no-referrer-when-downgrade" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+
+    <link rel="canonical" href={canonical} />
+  </head>
+
+  <body>
+    <slot />
+  </body>
+</html>
+`,
+  pagetailwind: `---
+import Layout from "#layout";
+
+const title = "title";
+const description = "description";
+---
+
+<Layout {title} {description}>
+  <main class="container mx-auto p-4">
+    <h1 class="text-2xl font-bold mb-4">App</h1>
+  </main>
+</Layout>
+`,
+  pagesolidtailwind: `---
+import App from "#app";
+import Layout from "#layout";
+
+const title = "title";
+const description = "description";
+---
+
+<Layout {title} {description}>
+  <App client:load />
+</Layout>
+`,
+  apptsxtailwind: `import { createSignal } from "solid-js";
+
+function App() {
+  return (
+    <main class="container mx-auto p-4">
+      <h1 class="text-2xl font-bold mb-4">App</h1>
+    </main>
+  );
+}
+
+export default App;
+`,
 } as const;
+// #endregion files
+
+declare global {
+  namespace NodeJS {
+    interface ProcessEnv {
+      SKIP_SNAPSHOTS?: string;
+    }
+  }
+}
+
+const SKIP_SNAPHOTS = !!process.env.SKIP_SNAPSHOTS;
 
 describe("getScaffoldContent", () => {
   describe("default template", () => {
@@ -146,7 +350,7 @@ describe("getScaffoldContent", () => {
           ],
         },
       });
-      expect(content).toMatchSnapshot();
+      if (!SKIP_SNAPHOTS) expect(content).toMatchSnapshot();
     });
 
     it("should generate normal oxlint config without tsgolint feature", () => {
@@ -166,7 +370,7 @@ describe("getScaffoldContent", () => {
           dev: ["@gameroman/config", "oxfmt", "oxlint", "typescript"],
         },
       });
-      expect(content).toMatchSnapshot();
+      if (!SKIP_SNAPHOTS) expect(content).toMatchSnapshot();
     });
 
     it("should generate tsgolint oxlint config when only tsgolint feature is specified", () => {
@@ -192,12 +396,14 @@ describe("getScaffoldContent", () => {
           ],
         },
       });
-      expect(content).toMatchSnapshot();
+      if (!SKIP_SNAPHOTS) expect(content).toMatchSnapshot();
     });
+  });
 
-    it("should generate basic files for default template with tsdown", () => {
+  describe("lib template", () => {
+    it("should generate basic files for lib template", () => {
       const content = getScaffoldContent({
-        template: "default",
+        template: "lib",
         features: ["oxfmt", "oxlint", "tsdown", "tsgolint"],
       });
       expect(content).toEqual({
@@ -205,9 +411,9 @@ describe("getScaffoldContent", () => {
           { path: ".gitignore", content: defaultFiles.gitignore },
           { path: "oxfmt.config.ts", content: defaultFiles.oxfmt },
           { path: "oxlint.config.ts", content: defaultFiles.tsgolint },
-          { path: "package.json", content: tsdownFiles.packagejson },
-          { path: "tsconfig.json", content: defaultFiles.tsconfig },
-          { path: "tsdown.config.ts", content: tsdownFiles.tsdown },
+          { path: "package.json", content: libFiles.packagejson },
+          { path: "tsconfig.json", content: libFiles.tsconfig },
+          { path: "tsdown.config.ts", content: libFiles.tsdown },
         ],
         dependencies: {
           dev: [
@@ -220,7 +426,7 @@ describe("getScaffoldContent", () => {
           ],
         },
       });
-      expect(content).toMatchSnapshot();
+      if (!SKIP_SNAPHOTS) expect(content).toMatchSnapshot();
     });
   });
 
@@ -232,6 +438,7 @@ describe("getScaffoldContent", () => {
       });
       expect(content).toEqual({
         files: [
+          { path: "src/layouts/Layout.astro", content: astroFiles.layout },
           { path: ".gitignore", content: astroFiles.gitignore },
           { path: "astro.config.ts", content: astroFiles.astro },
           { path: "biome.jsonc", content: astroFiles.biome },
@@ -248,7 +455,7 @@ describe("getScaffoldContent", () => {
           ],
         },
       });
-      expect(content).toMatchSnapshot();
+      if (!SKIP_SNAPHOTS) expect(content).toMatchSnapshot();
     });
 
     it("should generate astro template with tailwindcss", () => {
@@ -258,10 +465,16 @@ describe("getScaffoldContent", () => {
       });
       expect(content).toEqual({
         files: [
+          {
+            path: "src/layouts/Layout.astro",
+            content: astroFiles.layouttailwind,
+          },
+          { path: "src/pages/index.astro", content: astroFiles.pagetailwind },
+          { path: "src/styles/global.css", content: astroFiles.tailwindstyles },
           { path: ".gitignore", content: astroFiles.gitignore },
           { path: "astro.config.ts", content: astroFiles.astrotailwind },
           { path: "biome.jsonc", content: astroFiles.biometailwind },
-          { path: "package.json", content: astroFiles.packagejson },
+          { path: "package.json", content: astroFiles.packagejsontailwind },
           { path: "tailwind.config.ts", content: astroFiles.tailwind },
           { path: "tsconfig.json", content: astroFiles.tsconfig },
         ],
@@ -276,7 +489,80 @@ describe("getScaffoldContent", () => {
           ],
         },
       });
-      expect(content).toMatchSnapshot();
+      if (!SKIP_SNAPHOTS) expect(content).toMatchSnapshot();
+    });
+
+    it("should generate astro template with solidjs", () => {
+      const content = getScaffoldContent({
+        template: "astro",
+        features: ["biome", "solid", "wrangler"],
+      });
+      expect(content).toEqual({
+        files: [
+          { path: "src/layouts/Layout.astro", content: astroFiles.layout },
+          { path: ".gitignore", content: astroFiles.gitignore },
+          { path: "astro.config.ts", content: astroFiles.astrosolid },
+          { path: "biome.jsonc", content: astroFiles.biome },
+          { path: "package.json", content: astroFiles.packagejson },
+          { path: "tsconfig.json", content: astroFiles.tsconfigsolid },
+        ],
+        dependencies: {
+          default: ["astro", "solid-js"],
+          dev: [
+            "@astrojs/solid-js",
+            "@biomejs/biome",
+            "@gameroman/config",
+            "typescript",
+            "wrangler",
+          ],
+        },
+      });
+      if (!SKIP_SNAPHOTS) expect(content).toMatchSnapshot();
+    });
+
+    it("should generate astro template with solidjs and tailwindcss", () => {
+      const content = getScaffoldContent({
+        template: "astro",
+        features: ["biome", "solid", "tailwind", "wrangler"],
+      });
+      expect(content).toEqual({
+        files: [
+          {
+            path: "src/components/App.tsx",
+            content: astroFiles.apptsxtailwind,
+          },
+          {
+            path: "src/layouts/Layout.astro",
+            content: astroFiles.layouttailwind,
+          },
+          {
+            path: "src/pages/index.astro",
+            content: astroFiles.pagesolidtailwind,
+          },
+          { path: "src/styles/global.css", content: astroFiles.tailwindstyles },
+          { path: ".gitignore", content: astroFiles.gitignore },
+          { path: "astro.config.ts", content: astroFiles.astrosolidtailwind },
+          { path: "biome.jsonc", content: astroFiles.biometailwind },
+          {
+            path: "package.json",
+            content: astroFiles.packagejsonsolidtailwind,
+          },
+          { path: "tailwind.config.ts", content: astroFiles.tailwind },
+          { path: "tsconfig.json", content: astroFiles.tsconfigsolid },
+        ],
+        dependencies: {
+          default: ["astro", "solid-js", "tailwindcss"],
+          dev: [
+            "@astrojs/solid-js",
+            "@biomejs/biome",
+            "@gameroman/config",
+            "@tailwindcss/vite",
+            "typescript",
+            "wrangler",
+          ],
+        },
+      });
+      if (!SKIP_SNAPHOTS) expect(content).toMatchSnapshot();
     });
   });
 });

@@ -17,17 +17,19 @@ describe("resolveConfig", () => {
         features: ["oxfmt", "oxlint", "tsgolint"],
       });
     });
+  });
 
-    it("should resolve tsdown", () => {
-      expect(resolveConfig(["tsdown"])).toEqual({
-        template: "default",
+  describe("lib template", () => {
+    it("should resolve lib", () => {
+      expect(resolveConfig(["lib"])).toEqual({
+        template: "lib",
         features: ["oxfmt", "oxlint", "tsdown", "tsgolint"],
       });
     });
 
-    it("should resolve tsdown tsgolint (tsgolint already included)", () => {
-      expect(resolveConfig(["tsdown", "tsgolint"])).toEqual({
-        template: "default",
+    it("should resolve lib with tsgolint (tsgolint already included)", () => {
+      expect(resolveConfig(["lib", "tsgolint"])).toEqual({
+        template: "lib",
         features: ["oxfmt", "oxlint", "tsdown", "tsgolint"],
       });
     });
@@ -46,26 +48,12 @@ describe("resolveConfig", () => {
     it("should resolve astro", () => {
       expect(resolveConfig(["astro"])).toEqual({
         template: "astro",
-        features: ["biome", "wrangler"],
-      });
-    });
-
-    it("should resolve astro tailwind", () => {
-      expect(resolveConfig(["astro", "tailwind"])).toEqual({
-        template: "astro",
         features: ["biome", "tailwind", "wrangler"],
       });
     });
 
     it("should resolve astro solid", () => {
       expect(resolveConfig(["astro", "solid"])).toEqual({
-        template: "astro",
-        features: ["biome", "solid", "wrangler"],
-      });
-    });
-
-    it("should resolve astro solid tailwind", () => {
-      expect(resolveConfig(["astro", "solid", "tailwind"])).toEqual({
         template: "astro",
         features: ["biome", "solid", "tailwind", "wrangler"],
       });

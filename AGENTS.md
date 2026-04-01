@@ -3,24 +3,13 @@
 ## Available commands
 
 ```sh
+# Run tests
+bun run test:run
+
 # Lint and typecheck
+# Never run `tsc` for typechecking, `bun lint` does it already
 bun lint
 
 # Format code
 bun format
-
-# Run tests
-bun run test
-
-# Do all at once
-bun u
-```
-
-## Instructions
-
-Never edit test snapshots manually. Use `bun run test -u` instead
-
-```sh
-# Run tests and update snapshots
-bun run test -u
 ```

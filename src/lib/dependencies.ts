@@ -1,20 +1,18 @@
 import { $ } from "bun";
 
-import type { Dependencies } from "./resolver";
+import type { Dependencies } from "./scaffolder";
 
-async function installDependencies(dependencies: Dependencies) {
-  const defaultDeps = dependencies.default ?? [];
-  const devDeps = dependencies.dev ?? [];
+async function installDependencies(dependencies: Dependencies, install = true) {
+  const deps = dependencies.default;
 
-  if (defaultDeps.length > 0) {
-    const defaultDepsArg = defaultDeps.join(" ");
-    await $`bun add ${{ raw: defaultDepsArg }}`;
+  if (deps) {
+    await $`bun add ${{ raw: deps.join(" ") }} --lockfile-only`;
   }
-  if (devDeps.length > 0) {
-    const devDepsArg = devDeps.join(" ");
-    await $`bun add -d ${{ raw: devDepsArg }}`;
-  }
-  if (defaultDeps.length > 0 || devDeps.length > 0) {
+
+  const devDeps = { raw: dependencies.dev.join(" ") };
+  await $`bun add -d ${devDeps} --lockfile-only`;
+
+  if (install) {
     await $`bun install`;
   }
 }

@@ -209,7 +209,7 @@ export default config;
 }
 `;
 
-exports[`getScaffoldContent default template should generate basic files for default template with tsdown 1`] = `
+exports[`getScaffoldContent lib template should generate basic files for lib template 1`] = `
 {
   "dependencies": {
     "dev": [
@@ -252,7 +252,7 @@ export default config;
     {
       "content": 
 "{
-  "private": true,
+  "name": "",
   "type": "module",
   "scripts": {
     "test": "bun test",
@@ -269,7 +269,7 @@ export default config;
     {
       "content": 
 "{
-  "extends": "@gameroman/config/tsconfig",
+  "extends": "@gameroman/config/tsconfig/isolated",
   "compilerOptions": {
     "types": ["bun"]
   }
@@ -308,6 +308,52 @@ exports[`getScaffoldContent astro template should generate basic files for astro
     ],
   },
   "files": [
+    {
+      "content": 
+"---
+interface Props {
+  title: string;
+  description: string;
+  children: unknown;
+}
+
+const canonical = Astro.site
+  ? new URL(Astro.url.pathname, Astro.site)
+  : undefined;
+
+const { title, description } = Astro.props;
+---
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="referrer" content="no-referrer-when-downgrade" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+
+    <link rel="canonical" href={canonical} />
+  </head>
+
+  <body>
+    <slot />
+  </body>
+</html>
+"
+,
+      "path": "src/layouts/Layout.astro",
+    },
     {
       "content": 
 "node_modules/
@@ -394,6 +440,79 @@ exports[`getScaffoldContent astro template should generate astro template with t
   "files": [
     {
       "content": 
+"---
+import "#styles";
+
+interface Props {
+  title: string;
+  description: string;
+  children: unknown;
+}
+
+const canonical = Astro.site
+  ? new URL(Astro.url.pathname, Astro.site)
+  : undefined;
+
+const { title, description } = Astro.props;
+---
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="referrer" content="no-referrer-when-downgrade" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+
+    <link rel="canonical" href={canonical} />
+  </head>
+
+  <body>
+    <slot />
+  </body>
+</html>
+"
+,
+      "path": "src/layouts/Layout.astro",
+    },
+    {
+      "content": 
+"---
+import Layout from "#layout";
+
+const title = "title";
+const description = "description";
+---
+
+<Layout {title} {description}>
+  <main class="container mx-auto p-4">
+    <h1 class="text-2xl font-bold mb-4">App</h1>
+  </main>
+</Layout>
+"
+,
+      "path": "src/pages/index.astro",
+    },
+    {
+      "content": 
+"@import "tailwindcss";
+"
+,
+      "path": "src/styles/global.css",
+    },
+    {
+      "content": 
 "node_modules/
 
 dist/
@@ -434,7 +553,8 @@ export default defineConfig({
   "private": true,
   "type": "module",
   "imports": {
-    "#layout": "./src/layouts/Layout.astro"
+    "#layout": "./src/layouts/Layout.astro",
+    "#styles": "./src/styles/global.css"
   },
   "scripts": {
     "lint": "biome check",
@@ -462,6 +582,340 @@ export default {
       "content": 
 "{
   "extends": "astro/tsconfigs/strictest",
+  "include": [".astro/types.d.ts", "**/*"],
+  "exclude": ["dist"]
+}
+"
+,
+      "path": "tsconfig.json",
+    },
+  ],
+}
+`;
+
+exports[`getScaffoldContent astro template should generate astro template with solidjs 1`] = `
+{
+  "dependencies": {
+    "default": [
+      "astro",
+      "solid-js",
+    ],
+    "dev": [
+      "@astrojs/solid-js",
+      "@biomejs/biome",
+      "@gameroman/config",
+      "typescript",
+      "wrangler",
+    ],
+  },
+  "files": [
+    {
+      "content": 
+"---
+interface Props {
+  title: string;
+  description: string;
+  children: unknown;
+}
+
+const canonical = Astro.site
+  ? new URL(Astro.url.pathname, Astro.site)
+  : undefined;
+
+const { title, description } = Astro.props;
+---
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="referrer" content="no-referrer-when-downgrade" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+
+    <link rel="canonical" href={canonical} />
+  </head>
+
+  <body>
+    <slot />
+  </body>
+</html>
+"
+,
+      "path": "src/layouts/Layout.astro",
+    },
+    {
+      "content": 
+"node_modules/
+
+dist/
+
+.astro/
+.wrangler/
+"
+,
+      "path": ".gitignore",
+    },
+    {
+      "content": 
+"import solid from "@astrojs/solid-js";
+import { defineConfig } from "astro/config";
+
+export default defineConfig({
+  output: "static",
+  integrations: [solid()],
+});
+"
+,
+      "path": "astro.config.ts",
+    },
+    {
+      "content": 
+"{
+  "$schema": "node_modules/@biomejs/biome/configuration_schema.json",
+  "extends": ["@gameroman/config/biome"]
+}
+"
+,
+      "path": "biome.jsonc",
+    },
+    {
+      "content": 
+"{
+  "private": true,
+  "type": "module",
+  "imports": {
+    "#layout": "./src/layouts/Layout.astro"
+  },
+  "scripts": {
+    "lint": "biome check",
+    "format": "biome check --fix",
+    "dev": "astro dev",
+    "build": "astro build",
+    "deploy": "wrangler deploy"
+  }
+}
+"
+,
+      "path": "package.json",
+    },
+    {
+      "content": 
+"{
+  "extends": "astro/tsconfigs/strictest",
+  "compilerOptions": {
+    "jsxImportSource": "solid-js",
+    "jsx": "preserve",
+    "types": ["bun"]
+  },
+  "include": [".astro/types.d.ts", "**/*"],
+  "exclude": ["dist"]
+}
+"
+,
+      "path": "tsconfig.json",
+    },
+  ],
+}
+`;
+
+exports[`getScaffoldContent astro template should generate astro template with solidjs and tailwindcss 1`] = `
+{
+  "dependencies": {
+    "default": [
+      "astro",
+      "solid-js",
+      "tailwindcss",
+    ],
+    "dev": [
+      "@astrojs/solid-js",
+      "@biomejs/biome",
+      "@gameroman/config",
+      "@tailwindcss/vite",
+      "typescript",
+      "wrangler",
+    ],
+  },
+  "files": [
+    {
+      "content": 
+"import { createSignal } from "solid-js";
+
+function App() {
+  return (
+    <main class="container mx-auto p-4">
+      <h1 class="text-2xl font-bold mb-4">App</h1>
+    </main>
+  );
+}
+
+export default App;
+"
+,
+      "path": "src/components/App.tsx",
+    },
+    {
+      "content": 
+"---
+import "#styles";
+
+interface Props {
+  title: string;
+  description: string;
+  children: unknown;
+}
+
+const canonical = Astro.site
+  ? new URL(Astro.url.pathname, Astro.site)
+  : undefined;
+
+const { title, description } = Astro.props;
+---
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="referrer" content="no-referrer-when-downgrade" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+
+    <link rel="canonical" href={canonical} />
+  </head>
+
+  <body>
+    <slot />
+  </body>
+</html>
+"
+,
+      "path": "src/layouts/Layout.astro",
+    },
+    {
+      "content": 
+"---
+import App from "#app";
+import Layout from "#layout";
+
+const title = "title";
+const description = "description";
+---
+
+<Layout {title} {description}>
+  <App client:load />
+</Layout>
+"
+,
+      "path": "src/pages/index.astro",
+    },
+    {
+      "content": 
+"@import "tailwindcss";
+"
+,
+      "path": "src/styles/global.css",
+    },
+    {
+      "content": 
+"node_modules/
+
+dist/
+
+.astro/
+.wrangler/
+"
+,
+      "path": ".gitignore",
+    },
+    {
+      "content": 
+"import solid from "@astrojs/solid-js";
+import tailwindcss from "@tailwindcss/vite";
+import { defineConfig } from "astro/config";
+
+export default defineConfig({
+  output: "static",
+  integrations: [solid()],
+  vite: { plugins: [tailwindcss()] },
+});
+"
+,
+      "path": "astro.config.ts",
+    },
+    {
+      "content": 
+"{
+  "$schema": "node_modules/@biomejs/biome/configuration_schema.json",
+  "extends": ["@gameroman/config/biome"],
+  "css": { "parser": { "tailwindDirectives": true } }
+}
+"
+,
+      "path": "biome.jsonc",
+    },
+    {
+      "content": 
+"{
+  "private": true,
+  "type": "module",
+  "imports": {
+    "#app": "./src/components/App.tsx",
+    "#layout": "./src/layouts/Layout.astro",
+    "#styles": "./src/styles/global.css"
+  },
+  "scripts": {
+    "lint": "biome check",
+    "format": "biome check --fix",
+    "dev": "astro dev",
+    "build": "astro build",
+    "deploy": "wrangler deploy"
+  }
+}
+"
+,
+      "path": "package.json",
+    },
+    {
+      "content": 
+"/** @type {import('tailwindcss').Config} */
+export default {
+  content: { files: ["./src/**/*.{ts,tsx,astro}"] },
+};
+"
+,
+      "path": "tailwind.config.ts",
+    },
+    {
+      "content": 
+"{
+  "extends": "astro/tsconfigs/strictest",
+  "compilerOptions": {
+    "jsxImportSource": "solid-js",
+    "jsx": "preserve",
+    "types": ["bun"]
+  },
   "include": [".astro/types.d.ts", "**/*"],
   "exclude": ["dist"]
 }

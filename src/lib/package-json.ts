@@ -1,13 +1,22 @@
-import type { ResolvedConfig } from "./resolver";
+import type { ResolvedConfig, Template } from "./resolver";
 
-interface PackageJson {
-  private: boolean;
-  type: string;
-  imports?: Record<string, string>;
-  scripts: Record<string, string>;
+interface PackageJsonImports {
+  [key: string]: string;
 }
 
-const ASTRO_SCRIPTS: Record<string, string> = {
+interface PackageJsonScripts {
+  [key: string]: string;
+}
+
+interface PackageJson {
+  name?: string;
+  private?: boolean;
+  type: string;
+  imports?: PackageJsonImports;
+  scripts: PackageJsonScripts;
+}
+
+const ASTRO_SCRIPTS: PackageJsonScripts = {
   lint: "biome check",
   format: "biome check --fix",
   dev: "astro dev",
@@ -15,77 +24,95 @@ const ASTRO_SCRIPTS: Record<string, string> = {
   deploy: "wrangler deploy",
 };
 
-const TEMPLATE_SCRIPTS: Record<string, Record<string, string | undefined>> = {
+const TEMPLATE_SCRIPTS: Record<Template, PackageJsonScripts> = {
   default: { test: "bun test" },
   executable: { test: "bun test" },
+  lib: { test: "bun test" },
   astro: ASTRO_SCRIPTS,
 };
 
 function generatePackageJson(config: ResolvedConfig): PackageJson {
-  const template = config.template ?? "default";
+  const template = config.template;
   const features = config.features ?? [];
 
-  const templateScripts = TEMPLATE_SCRIPTS[template] ?? {};
-  const scripts: Record<string, string> = {};
+  const templateScripts = TEMPLATE_SCRIPTS[template];
+  const scripts: PackageJsonScripts = {};
   for (const [key, value] of Object.entries(templateScripts)) {
-    if (value !== undefined) scripts[key] = value;
+    scripts[key] = value;
   }
 
-  const base: PackageJson = {
-    private: true,
-    type: "module",
-    scripts,
-  };
+  const packageJson: PackageJson = { type: "module", scripts };
 
-  if (template === "astro") {
-    base.imports = {
-      "#layout": "./src/layouts/Layout.astro",
-    };
+  switch (template) {
+    case "astro": {
+      packageJson.private = true;
+      packageJson.imports = {
+        "#layout": "./src/layouts/Layout.astro",
+      };
+      if (features.includes("solid") && features.includes("tailwind")) {
+        packageJson.imports["#app"] = "./src/components/App.tsx";
+      }
+      break;
+    }
+    default: {
+      const hasOxlint = features.includes("oxlint");
+      const hasTsgolint = features.includes("tsgolint");
+
+      if (!hasOxlint && !hasTsgolint) {
+        delete packageJson.scripts["lint"];
+      } else {
+        packageJson.scripts["lint"] = "oxlint";
+      }
+
+      if (features.includes("oxfmt")) {
+        packageJson.scripts["format"] = "oxfmt";
+      }
+
+      if (features.includes("tsdown")) {
+        packageJson.name = "";
+        packageJson.scripts["build"] = "tsdown";
+        packageJson.scripts["prepublishOnly"] = "bun run build";
+      } else {
+        packageJson.private = true;
+      }
+    }
   }
 
-  if (template === "default" || template === "executable") {
-    const hasOxlint = features.includes("oxlint");
-    const hasTsgolint = features.includes("tsgolint");
+  return packageJson;
+}
 
-    if (!hasOxlint && !hasTsgolint) {
-      delete base.scripts["lint"];
-    } else {
-      base.scripts["lint"] = "oxlint";
-    }
-
-    if (features.includes("oxfmt")) {
-      base.scripts["format"] = "oxfmt";
-    }
-
-    if (features.includes("tsdown")) {
-      base.scripts["build"] = "tsdown";
-      base.scripts["prepublishOnly"] = "bun run build";
-    }
-  }
-
-  return base;
+function sortKeys<T>(obj: Record<string, T>) {
+  return Object.keys(obj)
+    .toSorted()
+    .reduce<Record<string, T>>((acc, k) => {
+      acc[k] = obj[k] as T;
+      return acc;
+    }, {});
 }
 
 function serializePackageJson(pkg: PackageJson): string {
-  const keys = ["private", "type", "imports", "scripts"] as const;
+  const keys = ["name", "private", "type", "imports", "scripts"] as const;
   const parts: string[] = [];
 
   for (const key of keys) {
     const value = pkg[key];
-    if (value !== undefined) {
-      if (typeof value === "object" && value !== null) {
-        const serialized = JSON.stringify(value, null, 2);
-        const lines = serialized.split("\n");
-        const body = lines.slice(1, -1).join("\n");
-        const indentedBody = body
-          .split("\n")
-          .map((line) => `  ${line}`)
-          .join("\n");
-        parts.push(`  "${key}": {\n${indentedBody}\n  }`);
-      } else {
-        parts.push(`  "${key}": ${JSON.stringify(value)}`);
-      }
+    if (value === undefined) continue;
+    if (typeof value !== "object") {
+      parts.push(`  "${key}": ${JSON.stringify(value)}`);
+      continue;
     }
+    let obj = value;
+    if (key === "imports") {
+      obj = sortKeys(obj);
+    }
+    const serialized = JSON.stringify(obj, null, 2);
+    const lines = serialized.split("\n");
+    const body = lines.slice(1, -1).join("\n");
+    const indentedBody = body
+      .split("\n")
+      .map((line) => `  ${line}`)
+      .join("\n");
+    parts.push(`  "${key}": {\n${indentedBody}\n  }`);
   }
 
   return `{\n${parts.join(",\n")}\n}\n`;

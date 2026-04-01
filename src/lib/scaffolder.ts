@@ -1,9 +1,15 @@
+import { generateAstroConfig, serializeAstroConfig } from "./astro-config";
 import { generatePackageJson, serializePackageJson } from "./package-json";
-import type { ResolvedConfig, Dependencies } from "./resolver";
+import type { ResolvedConfig, Feature, Template } from "./resolver";
 
 interface FileInfo {
   path: string;
   content: string;
+}
+
+interface Dependencies {
+  default?: string[];
+  dev: string[];
 }
 
 interface ScaffoldContent {
@@ -17,6 +23,14 @@ const GITIGNORE_ASTRO = "node_modules/\n\ndist/\n\n.astro/\n.wrangler/\n";
 const BIOME_ASTRO = `{
   "$schema": "node_modules/@biomejs/biome/configuration_schema.json",
   "extends": ["@gameroman/config/biome"]
+}
+`;
+
+const TSCONFIG_LIB = `{
+  "extends": "@gameroman/config/tsconfig/isolated",
+  "compilerOptions": {
+    "types": ["bun"]
+  }
 }
 `;
 
@@ -35,24 +49,39 @@ const TSCONFIG_ASTRO = `{
 }
 `;
 
+const TSCONFIG_ASTRO_SOLID = `{
+  "extends": "astro/tsconfigs/strictest",
+  "compilerOptions": {
+    "jsxImportSource": "solid-js",
+    "jsx": "preserve",
+    "types": ["bun"]
+  },
+  "include": [".astro/types.d.ts", "**/*"],
+  "exclude": ["dist"]
+}
+`;
+
+const GLOBAL_CSS_TAILWIND = `@import "tailwindcss";
+`;
+
 type FileGenerator = (files: FileInfo[], config: ResolvedConfig) => void;
 
-const FEATURES: Record<string, FileGenerator> = {
-  oxfmt: (files) => {
+const FEATURES: Partial<Record<Feature, FileGenerator>> = {
+  oxfmt(files) {
     files.push({
       path: "oxfmt.config.ts",
       content:
         'import { config } from "@gameroman/config/oxfmt";\n\nexport default config;\n',
     });
   },
-  oxlint: (files, config) => {
+  oxlint(files, config) {
     const isTypeaware = config.features?.includes("tsgolint");
     files.push({
       path: "oxlint.config.ts",
       content: `import { config } from "@gameroman/config/oxlint${isTypeaware ? "/typeaware" : ""}";\n\nexport default config;\n`,
     });
   },
-  tsgolint: (files) => {
+  tsgolint(files) {
     if (!files.some((f) => f.path === "oxlint.config.ts")) {
       files.push({
         path: "oxlint.config.ts",
@@ -61,14 +90,14 @@ const FEATURES: Record<string, FileGenerator> = {
       });
     }
   },
-  tsdown: (files) => {
+  tsdown(files) {
     files.push({
       path: "tsdown.config.ts",
       content:
         'import { defineConfig } from "tsdown";\n\nexport default defineConfig({\n  dts: true,\n  exports: true,\n});\n',
     });
   },
-  biome: (files, config) => {
+  biome(files, config) {
     const hasTailwind = config.features?.includes("tailwind");
     const biomeContent = hasTailwind
       ? `{
@@ -83,7 +112,7 @@ const FEATURES: Record<string, FileGenerator> = {
       content: biomeContent,
     });
   },
-  tailwind: (files) => {
+  tailwind(files) {
     files.push({
       path: "tailwind.config.ts",
       content:
@@ -94,8 +123,8 @@ const FEATURES: Record<string, FileGenerator> = {
 
 type TemplateGenerator = (files: FileInfo[], config: ResolvedConfig) => void;
 
-const TEMPLATES: Record<string, TemplateGenerator> = {
-  default: (files, config) => {
+const TEMPLATES: Record<Template, TemplateGenerator> = {
+  default(files, config) {
     files.push({ path: ".gitignore", content: GITIGNORE_DEFAULT });
     files.push({ path: "tsconfig.json", content: TSCONFIG_DEFAULT });
     const pkg = generatePackageJson(config);
@@ -104,37 +133,137 @@ const TEMPLATES: Record<string, TemplateGenerator> = {
       content: serializePackageJson(pkg),
     });
   },
-  executable: (files, config) => {
-    TEMPLATES["default"]!(files, config);
-  },
-  astro: (files, config) => {
-    files.push({ path: ".gitignore", content: GITIGNORE_ASTRO });
-    files.push({ path: "tsconfig.json", content: TSCONFIG_ASTRO });
+  lib(files, config) {
+    files.push({ path: ".gitignore", content: GITIGNORE_DEFAULT });
+    files.push({ path: "tsconfig.json", content: TSCONFIG_LIB });
     const pkg = generatePackageJson(config);
     files.push({
       path: "package.json",
       content: serializePackageJson(pkg),
     });
+  },
+  executable(files, config) {
+    TEMPLATES.default(files, config);
+  },
+  astro(files, config) {
+    files.push({ path: ".gitignore", content: GITIGNORE_ASTRO });
+    const hasSolid = config.features?.includes("solid");
     const hasTailwind = config.features?.includes("tailwind");
-    const astroContent = hasTailwind
-      ? `import tailwindcss from "@tailwindcss/vite";
-import { defineConfig } from "astro/config";
+    files.push({
+      path: "tsconfig.json",
+      content: hasSolid ? TSCONFIG_ASTRO_SOLID : TSCONFIG_ASTRO,
+    });
+    const pkg = generatePackageJson(config);
+    if (hasTailwind) {
+      pkg.imports ??= {};
+      pkg.imports["#styles"] = "./src/styles/global.css";
+    }
+    files.push({ path: "package.json", content: serializePackageJson(pkg) });
+    const astroOptions = generateAstroConfig(config);
+    const astroContent = serializeAstroConfig(astroOptions);
+    files.push({ path: "astro.config.ts", content: astroContent });
+    const layoutContent = `---${hasTailwind ? '\nimport "#styles";\n' : ""}
+interface Props {
+  title: string;
+  description: string;
+  children: unknown;
+}
 
-export default defineConfig({
-  output: "static",
-  vite: { plugins: [tailwindcss()] },
-});
-`
-      : `import { defineConfig } from "astro/config";
+const canonical = Astro.site
+  ? new URL(Astro.url.pathname, Astro.site)
+  : undefined;
 
-export default defineConfig({
-  output: "static",
-});
+const { title, description } = Astro.props;
+---
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="referrer" content="no-referrer-when-downgrade" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+
+    <link rel="canonical" href={canonical} />
+  </head>
+
+  <body>
+    <slot />
+  </body>
+</html>
 `;
     files.push({
-      path: "astro.config.ts",
-      content: astroContent,
+      path: "src/layouts/Layout.astro",
+      content: layoutContent,
     });
+    if (hasTailwind) {
+      files.push({
+        path: "src/styles/global.css",
+        content: GLOBAL_CSS_TAILWIND,
+      });
+    }
+    if (hasSolid && hasTailwind) {
+      const pageContent = `---
+import App from "#app";
+import Layout from "#layout";
+
+const title = "title";
+const description = "description";
+---
+
+<Layout {title} {description}>
+  <App client:load />
+</Layout>
+`;
+      files.push({
+        path: "src/pages/index.astro",
+        content: pageContent,
+      });
+      files.push({
+        path: "src/components/App.tsx",
+        content: `import { createSignal } from "solid-js";
+
+function App() {
+  return (
+    <main class="container mx-auto p-4">
+      <h1 class="text-2xl font-bold mb-4">App</h1>
+    </main>
+  );
+}
+
+export default App;
+`,
+      });
+    } else if (hasTailwind) {
+      const pageContent = `---
+import Layout from "#layout";
+
+const title = "title";
+const description = "description";
+---
+
+<Layout {title} {description}>
+  <main class="container mx-auto p-4">
+    <h1 class="text-2xl font-bold mb-4">App</h1>
+  </main>
+</Layout>
+`;
+      files.push({
+        path: "src/pages/index.astro",
+        content: pageContent,
+      });
+    }
   },
 };
 
@@ -143,51 +272,74 @@ function getScaffoldContent(config: ResolvedConfig): ScaffoldContent {
   const features = config.features ?? [];
 
   const templateFn = TEMPLATES[config.template];
-  if (templateFn) templateFn(files, config);
+  templateFn(files, config);
 
   for (const feature of features) {
     const featureFn = FEATURES[feature];
     if (featureFn) featureFn(files, config);
   }
 
-  files.sort((a, b) => a.path.localeCompare(b.path));
+  files.sort((a, b) => {
+    const aIsDir = a.path.includes("/");
+    const bIsDir = b.path.includes("/");
+    if (aIsDir && !bIsDir) return -1;
+    if (!aIsDir && bIsDir) return 1;
+    return a.path.localeCompare(b.path);
+  });
 
-  const defaultDeps = new Set<string>();
+  const deps = new Set<string>();
   const devDeps = new Set<string>(["@gameroman/config", "typescript"]);
 
   if (config.template === "astro") {
-    defaultDeps.add("astro");
+    deps.add("astro");
   }
 
   for (const feature of features) {
-    if (feature === "tailwind") {
-      defaultDeps.add("tailwindcss");
-      devDeps.add("@tailwindcss/vite");
-    } else if (feature === "solid") {
-      defaultDeps.add("solid-js");
-      devDeps.add("@astrojs/solid-js");
-    } else if (feature === "tsdown") {
-      devDeps.add("tsdown");
-    } else if (feature === "wrangler") {
-      devDeps.add("wrangler");
-    } else if (feature === "biome") {
-      devDeps.add("@biomejs/biome");
-    } else if (feature === "oxfmt") {
-      devDeps.add("oxfmt");
-    } else if (feature === "oxlint") {
-      devDeps.add("oxlint");
-    } else if (feature === "tsgolint") {
-      devDeps.add("oxlint").add("oxlint-tsgolint");
+    switch (feature) {
+      case "tailwind": {
+        deps.add("tailwindcss");
+        devDeps.add("@tailwindcss/vite");
+        continue;
+      }
+      case "solid": {
+        deps.add("solid-js");
+        devDeps.add("@astrojs/solid-js");
+        continue;
+      }
+      case "tsdown": {
+        devDeps.add("tsdown");
+        continue;
+      }
+      case "wrangler": {
+        devDeps.add("wrangler");
+        continue;
+      }
+      case "biome": {
+        devDeps.add("@biomejs/biome");
+        continue;
+      }
+      case "oxfmt": {
+        devDeps.add("oxfmt");
+        continue;
+      }
+      case "oxlint": {
+        devDeps.add("oxlint");
+        continue;
+      }
+      case "tsgolint": {
+        devDeps.add("oxlint").add("oxlint-tsgolint");
+        continue;
+      }
     }
   }
 
   const dependencies: Dependencies = { dev: Array.from(devDeps).toSorted() };
-  if (defaultDeps.size > 0) {
-    dependencies.default = Array.from(defaultDeps).toSorted();
+  if (deps.size > 0) {
+    dependencies.default = Array.from(deps).toSorted();
   }
 
   return { files, dependencies };
 }
 
 export { getScaffoldContent };
-export type { ScaffoldContent, FileInfo };
+export type { ScaffoldContent, FileInfo, Dependencies };

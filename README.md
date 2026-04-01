@@ -1,14 +1,20 @@
 # TypeScript project creator
 
-## Simple template
+## Library
 
 ```sh
-bunx roman
+bunx roman lib
 ```
 
 ## Astro app
 
 ```sh
 bunx roman astro
-bunx roman astro solid tailwind
+bunx roman astro solid
+```
+
+## Single file executable
+
+```sh
+bunx roman exe
 ```
