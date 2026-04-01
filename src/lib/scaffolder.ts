@@ -245,6 +245,24 @@ function App() {
 export default App;
 `,
       });
+    } else if (hasTailwind) {
+      const pageContent = `---
+import Layout from "#layout";
+
+const title = "title";
+const description = "description";
+---
+
+<Layout {title} {description}>
+  <main class="container mx-auto p-4">
+    <h1 class="text-2xl font-bold mb-4">App</h1>
+  </main>
+</Layout>
+`;
+      files.push({
+        path: "src/pages/index.astro",
+        content: pageContent,
+      });
     }
   },
 };
