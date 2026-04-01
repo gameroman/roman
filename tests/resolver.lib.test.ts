@@ -58,5 +58,12 @@ describe("resolveConfig", () => {
         features: ["biome", "solid", "tailwind", "wrangler"],
       });
     });
+
+    it("should resolve solid", () => {
+      expect(resolveConfig(["solid"])).toEqual({
+        template: "astro",
+        features: ["biome", "solid", "tailwind", "wrangler"],
+      });
+    });
   });
 });

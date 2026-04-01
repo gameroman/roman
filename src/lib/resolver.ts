@@ -16,7 +16,7 @@ interface ResolvedConfig {
 }
 
 function getTemplate(args: string[]) {
-  return args.includes("astro")
+  return args.includes("astro") || args.includes("solid")
     ? "astro"
     : args.includes("exe")
       ? "executable"
@@ -37,9 +37,7 @@ function resolveConfig(args: string[]): ResolvedConfig {
   }
 
   if (template === "astro") {
-    features.add("biome");
-    features.add("tailwind");
-    features.add("wrangler");
+    features.add("biome").add("tailwind").add("wrangler");
   } else {
     features.add("oxfmt").add("oxlint").add("tsgolint");
   }
