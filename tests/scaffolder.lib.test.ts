@@ -493,12 +493,12 @@ describe("getScaffoldContent", () => {
       expect(content).toEqual({
         files: [
           {
-            path: "src/layouts/Layout.astro",
-            content: astroFiles.layouttailwind,
-          },
-          {
             path: "src/components/App.tsx",
             content: astroFiles.apptsxtailwind,
+          },
+          {
+            path: "src/layouts/Layout.astro",
+            content: astroFiles.layouttailwind,
           },
           {
             path: "src/pages/index.astro",
