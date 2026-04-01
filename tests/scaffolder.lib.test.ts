@@ -471,6 +471,33 @@ describe("getScaffoldContent", () => {
       });
       if (!SKIP_SNAPHOTS) expect(content).toMatchSnapshot();
     });
+
+    it("should generate executable template with telegram", () => {
+      const content = getScaffoldContent({
+        template: "executable",
+        features: ["oxfmt", "oxlint", "telegram", "tsgolint"],
+      });
+      expect(content).toEqual({
+        files: [
+          { path: ".gitignore", content: defaultFiles.gitignore },
+          { path: "oxfmt.config.ts", content: defaultFiles.oxfmt },
+          { path: "oxlint.config.ts", content: defaultFiles.tsgolint },
+          { path: "package.json", content: exeFiles.packagejson },
+          { path: "tsconfig.json", content: defaultFiles.tsconfig },
+        ],
+        dependencies: {
+          default: ["@grammyjs/runner", "grammy"],
+          dev: [
+            "@gameroman/config",
+            "oxfmt",
+            "oxlint",
+            "oxlint-tsgolint",
+            "typescript",
+          ],
+        },
+      });
+      if (!SKIP_SNAPHOTS) expect(content).toMatchSnapshot();
+    });
   });
 
   describe("astro template", () => {
