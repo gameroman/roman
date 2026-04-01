@@ -1,5 +1,5 @@
 import type { ResolvedConfig, Template } from "./resolver";
-import { sortKeys } from "./sort-keys";
+import { sortKeys, sortKeysSpecificOrder } from "./sort-keys";
 
 interface PackageJsonImports {
   [key: string]: string;
@@ -25,8 +25,18 @@ const ASTRO_SCRIPTS: PackageJsonScripts = {
   deploy: "wrangler deploy",
 };
 
+const EXECUTABLE_SCRIPTS: PackageJsonScripts = {
+  test: "bun test",
+  lint: "oxlint",
+  format: "oxfmt",
+  dev: "NODE_ENV=development bun run ./src/index.ts",
+  build:
+    "NODE_ENV=production bun build --minify --compile ./src/index.ts --outfile=dist/bot --target=bun-linux-arm64",
+};
+
 const TEMPLATE_SCRIPTS: Partial<Record<Template, PackageJsonScripts>> = {
   astro: ASTRO_SCRIPTS,
+  executable: EXECUTABLE_SCRIPTS,
 };
 
 function generatePackageJson(config: ResolvedConfig): PackageJson {
@@ -75,6 +85,16 @@ function generatePackageJson(config: ResolvedConfig): PackageJson {
       }
     }
   }
+
+  packageJson.scripts = sortKeysSpecificOrder(packageJson.scripts, [
+    "test",
+    "lint",
+    "format",
+    "dev",
+    "build",
+    "deploy",
+    "prepublishOnly",
+  ]);
 
   return packageJson;
 }
