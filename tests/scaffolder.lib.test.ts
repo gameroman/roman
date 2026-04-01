@@ -47,7 +47,7 @@ export default defineConfig({
 });
 `,
   packagejson: `{
-  "private": true,
+  "name": "",
   "type": "module",
   "scripts": {
     "test": "bun test",
