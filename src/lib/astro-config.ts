@@ -18,15 +18,20 @@ function generateAstroConfig(config: ResolvedConfig): AstroConfigOptions {
   };
 }
 
+function stringifyArray(arr: string[]) {
+  const joined = arr.join(", ");
+  return `[${joined}]`;
+}
+
 function buildConfigSection(options: AstroConfigOptions): string {
   const lines = [`  output: "${options.output}",`];
 
   if (options.integrations.length > 0) {
-    lines.push(`  integrations: [${options.integrations.join(", ")}],`);
+    lines.push(`  integrations: ${stringifyArray(options.integrations)},`);
   }
 
   if (options.vitePlugins.length > 0) {
-    lines.push(`  vite: { plugins: [${options.vitePlugins.join(", ")}] },`);
+    lines.push(`  vite: { plugins: ${stringifyArray(options.vitePlugins)} },`);
   }
 
   return lines.join("\n");

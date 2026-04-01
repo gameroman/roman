@@ -1,15 +1,15 @@
 import { generateAstroConfig, serializeAstroConfig } from "./astro-config";
 import { generatePackageJson, serializePackageJson } from "./package-json";
-import type {
-  ResolvedConfig,
-  Dependencies,
-  Feature,
-  Template,
-} from "./resolver";
+import type { ResolvedConfig, Feature, Template } from "./resolver";
 
 interface FileInfo {
   path: string;
   content: string;
+}
+
+interface Dependencies {
+  default?: string[];
+  dev: string[];
 }
 
 interface ScaffoldContent {
@@ -287,22 +287,22 @@ function getScaffoldContent(config: ResolvedConfig): ScaffoldContent {
     return a.path.localeCompare(b.path);
   });
 
-  const defaultDeps = new Set<string>();
+  const deps = new Set<string>();
   const devDeps = new Set<string>(["@gameroman/config", "typescript"]);
 
   if (config.template === "astro") {
-    defaultDeps.add("astro");
+    deps.add("astro");
   }
 
   for (const feature of features) {
     switch (feature) {
       case "tailwind": {
-        defaultDeps.add("tailwindcss");
+        deps.add("tailwindcss");
         devDeps.add("@tailwindcss/vite");
         continue;
       }
       case "solid": {
-        defaultDeps.add("solid-js");
+        deps.add("solid-js");
         devDeps.add("@astrojs/solid-js");
         continue;
       }
@@ -334,12 +334,12 @@ function getScaffoldContent(config: ResolvedConfig): ScaffoldContent {
   }
 
   const dependencies: Dependencies = { dev: Array.from(devDeps).toSorted() };
-  if (defaultDeps.size > 0) {
-    dependencies.default = Array.from(defaultDeps).toSorted();
+  if (deps.size > 0) {
+    dependencies.default = Array.from(deps).toSorted();
   }
 
   return { files, dependencies };
 }
 
 export { getScaffoldContent };
-export type { ScaffoldContent, FileInfo };
+export type { ScaffoldContent, FileInfo, Dependencies };

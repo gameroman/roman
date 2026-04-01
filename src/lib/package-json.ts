@@ -1,4 +1,4 @@
-import type { ResolvedConfig } from "./resolver";
+import type { ResolvedConfig, Template } from "./resolver";
 
 interface PackageJsonImports {
   [key: string]: string;
@@ -24,7 +24,7 @@ const ASTRO_SCRIPTS: PackageJsonScripts = {
   deploy: "wrangler deploy",
 };
 
-const TEMPLATE_SCRIPTS: Record<string, PackageJsonScripts> = {
+const TEMPLATE_SCRIPTS: Record<Template, PackageJsonScripts> = {
   default: { test: "bun test" },
   executable: { test: "bun test" },
   lib: { test: "bun test" },
@@ -35,7 +35,7 @@ function generatePackageJson(config: ResolvedConfig): PackageJson {
   const template = config.template;
   const features = config.features ?? [];
 
-  const templateScripts = TEMPLATE_SCRIPTS[template] ?? {};
+  const templateScripts = TEMPLATE_SCRIPTS[template];
   const scripts: PackageJsonScripts = {};
   for (const [key, value] of Object.entries(templateScripts)) {
     scripts[key] = value;
@@ -81,6 +81,15 @@ function generatePackageJson(config: ResolvedConfig): PackageJson {
   return packageJson;
 }
 
+function sortKeys<T>(obj: Record<string, T>) {
+  return Object.keys(obj)
+    .toSorted()
+    .reduce<Record<string, T>>((acc, k) => {
+      acc[k] = obj[k] as T;
+      return acc;
+    }, {});
+}
+
 function serializePackageJson(pkg: PackageJson): string {
   const keys = ["name", "private", "type", "imports", "scripts"] as const;
   const parts: string[] = [];
@@ -94,12 +103,7 @@ function serializePackageJson(pkg: PackageJson): string {
     }
     let obj = value;
     if (key === "imports") {
-      obj = Object.keys(value)
-        .toSorted()
-        .reduce<PackageJsonImports>((acc, k) => {
-          acc[k] = value[k] as string;
-          return acc;
-        }, {});
+      obj = sortKeys(obj);
     }
     const serialized = JSON.stringify(obj, null, 2);
     const lines = serialized.split("\n");

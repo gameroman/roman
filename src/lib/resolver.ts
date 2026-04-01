@@ -10,11 +10,6 @@ type Feature =
   | "wrangler"
   | "tsdown";
 
-interface Dependencies {
-  default?: string[];
-  dev?: string[];
-}
-
 interface ResolvedConfig {
   template: Template;
   features?: Feature[];
@@ -61,4 +56,4 @@ function resolveConfig(args: string[]): ResolvedConfig {
 }
 
 export { resolveConfig };
-export type { Dependencies, ResolvedConfig, Feature, Template };
+export type { ResolvedConfig, Feature, Template };
