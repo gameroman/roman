@@ -151,16 +151,7 @@ const TEMPLATES: Record<Template, TemplateGenerator> = {
       path: "astro.config.ts",
       content: astroContent,
     });
-    if (hasTailwind) {
-      files.push({
-        path: "src/styles/global.css",
-        content: GLOBAL_CSS_TAILWIND,
-      });
-      files.push({
-        path: "src/layouts/Layout.astro",
-        content: `---
-import "#styles";
-
+    const layoutContent = `---${hasTailwind ? '\nimport "#styles";\n' : ""}
 interface Props {
   title: string;
   description: string;
@@ -200,7 +191,15 @@ const { title, description } = Astro.props;
     <slot />
   </body>
 </html>
-`,
+`;
+    files.push({
+      path: "src/layouts/Layout.astro",
+      content: layoutContent,
+    });
+    if (hasTailwind) {
+      files.push({
+        path: "src/styles/global.css",
+        content: GLOBAL_CSS_TAILWIND,
       });
     }
     if (hasSolid && hasTailwind) {
