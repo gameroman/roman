@@ -41,6 +41,9 @@ function generatePackageJson(config: ResolvedConfig): PackageJson {
     base.imports = {
       "#layout": "./src/layouts/Layout.astro",
     };
+    if (features.includes("solid") && features.includes("tailwind")) {
+      base.imports["#app"] = "./src/components/App.tsx";
+    }
   }
 
   if (template === "default" || template === "executable") {

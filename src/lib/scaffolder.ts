@@ -203,6 +203,24 @@ const { title, description } = Astro.props;
 `,
       });
     }
+    if (hasSolid && hasTailwind) {
+      const pageContent = `---
+import App from "#app";
+import Layout from "#layout";
+
+const title = "title";
+const description = "description";
+---
+
+<Layout {title} {description}>
+  <App client:load />
+</Layout>
+`;
+      files.push({
+        path: "src/pages/index.astro",
+        content: pageContent,
+      });
+    }
   },
 };
 
