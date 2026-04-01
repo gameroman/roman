@@ -99,6 +99,23 @@ dist/
   }
 }
 `,
+  packagejsonsolidtailwind: `{
+  "private": true,
+  "type": "module",
+  "imports": {
+    "#app": "./src/components/App.tsx",
+    "#layout": "./src/layouts/Layout.astro",
+    "#styles": "./src/styles/global.css"
+  },
+  "scripts": {
+    "lint": "biome check",
+    "format": "biome check --fix",
+    "dev": "astro dev",
+    "build": "astro build",
+    "deploy": "wrangler deploy"
+  }
+}
+`,
   tsconfig: `{
   "extends": "astro/tsconfigs/strictest",
   "include": [".astro/types.d.ts", "**/*"],
@@ -208,6 +225,18 @@ const { title, description } = Astro.props;
     <slot />
   </body>
 </html>
+`,
+  pagesolidtailwind: `---
+import App from "#app";
+import Layout from "#layout";
+
+const title = "title";
+const description = "description";
+---
+
+<Layout {title} {description}>
+  <App client:load />
+</Layout>
 `,
 } as const;
 
@@ -412,11 +441,18 @@ describe("getScaffoldContent", () => {
             path: "src/layouts/Layout.astro",
             content: astroFiles.layouttailwind,
           },
+          {
+            path: "src/pages/index.astro",
+            content: astroFiles.pagesolidtailwind,
+          },
           { path: "src/styles/global.css", content: astroFiles.tailwindstyles },
           { path: ".gitignore", content: astroFiles.gitignore },
           { path: "astro.config.ts", content: astroFiles.astrosolidtailwind },
           { path: "biome.jsonc", content: astroFiles.biometailwind },
-          { path: "package.json", content: astroFiles.packagejsontailwind },
+          {
+            path: "package.json",
+            content: astroFiles.packagejsonsolidtailwind,
+          },
           { path: "tailwind.config.ts", content: astroFiles.tailwind },
           { path: "tsconfig.json", content: astroFiles.tsconfigsolid },
         ],
