@@ -25,7 +25,9 @@ function getTemplate(args: string[]) {
     ? "astro"
     : args.includes("exe")
       ? "executable"
-      : "default";
+      : args.includes("lib")
+        ? "lib"
+        : "default";
 }
 
 function resolveConfig(args: string[]): ResolvedConfig {
@@ -34,22 +36,21 @@ function resolveConfig(args: string[]): ResolvedConfig {
   const features = new Set<Feature>();
 
   for (const arg of args) {
-    if (arg === "astro") {
-      features.add("biome");
-      features.add("tailwind");
-    } else if (arg === "solid") {
+    if (arg === "solid") {
       features.add("solid");
-    } else if (arg === "tsdown") {
-      features.add("tsdown");
     }
   }
 
-  if (template === "default" || template === "executable") {
+  if (template === "astro") {
+    features.add("biome");
+    features.add("tailwind");
+    features.add("wrangler");
+  } else {
     features.add("oxfmt").add("oxlint").add("tsgolint");
   }
 
-  if (template === "astro") {
-    features.add("wrangler");
+  if (template === "lib") {
+    features.add("tsdown");
   }
 
   const result: ResolvedConfig = { template };

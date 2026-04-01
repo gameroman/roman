@@ -46,6 +46,13 @@ export default defineConfig({
   exports: true,
 });
 `,
+  tsconfig: `{
+  "extends": "@gameroman/config/tsconfig/isolated",
+  "compilerOptions": {
+    "types": ["bun"]
+  }
+}
+`,
   packagejson: `{
   "name": "",
   "type": "module",
@@ -380,7 +387,7 @@ describe("getScaffoldContent", () => {
           { path: "oxfmt.config.ts", content: defaultFiles.oxfmt },
           { path: "oxlint.config.ts", content: defaultFiles.tsgolint },
           { path: "package.json", content: libFiles.packagejson },
-          { path: "tsconfig.json", content: defaultFiles.tsconfig },
+          { path: "tsconfig.json", content: libFiles.tsconfig },
           { path: "tsdown.config.ts", content: libFiles.tsdown },
         ],
         dependencies: {

@@ -125,6 +125,9 @@ const TEMPLATES: Record<Template, TemplateGenerator> = {
       content: serializePackageJson(pkg),
     });
   },
+  lib(files, config) {
+    TEMPLATES.default(files, config);
+  },
   executable(files, config) {
     TEMPLATES.default(files, config);
   },
@@ -141,16 +144,10 @@ const TEMPLATES: Record<Template, TemplateGenerator> = {
       pkg.imports ??= {};
       pkg.imports["#styles"] = "./src/styles/global.css";
     }
-    files.push({
-      path: "package.json",
-      content: serializePackageJson(pkg),
-    });
+    files.push({ path: "package.json", content: serializePackageJson(pkg) });
     const astroOptions = generateAstroConfig(config);
     const astroContent = serializeAstroConfig(astroOptions);
-    files.push({
-      path: "astro.config.ts",
-      content: astroContent,
-    });
+    files.push({ path: "astro.config.ts", content: astroContent });
     const layoutContent = `---${hasTailwind ? '\nimport "#styles";\n' : ""}
 interface Props {
   title: string;

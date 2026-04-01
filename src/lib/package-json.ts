@@ -27,6 +27,7 @@ const ASTRO_SCRIPTS: PackageJsonScripts = {
 const TEMPLATE_SCRIPTS: Record<string, PackageJsonScripts> = {
   default: { test: "bun test" },
   executable: { test: "bun test" },
+  lib: { test: "bun test" },
   astro: ASTRO_SCRIPTS,
 };
 
@@ -42,36 +43,38 @@ function generatePackageJson(config: ResolvedConfig): PackageJson {
 
   const packageJson: PackageJson = { type: "module", scripts };
 
-  if (template === "astro") {
-    packageJson.private = true;
-    packageJson.imports = {
-      "#layout": "./src/layouts/Layout.astro",
-    };
-    if (features.includes("solid") && features.includes("tailwind")) {
-      packageJson.imports["#app"] = "./src/components/App.tsx";
-    }
-  }
-
-  if (template === "default" || template === "executable") {
-    const hasOxlint = features.includes("oxlint");
-    const hasTsgolint = features.includes("tsgolint");
-
-    if (!hasOxlint && !hasTsgolint) {
-      delete packageJson.scripts["lint"];
-    } else {
-      packageJson.scripts["lint"] = "oxlint";
-    }
-
-    if (features.includes("oxfmt")) {
-      packageJson.scripts["format"] = "oxfmt";
-    }
-
-    if (features.includes("tsdown")) {
-      packageJson.name = "";
-      packageJson.scripts["build"] = "tsdown";
-      packageJson.scripts["prepublishOnly"] = "bun run build";
-    } else {
+  switch (template) {
+    case "astro": {
       packageJson.private = true;
+      packageJson.imports = {
+        "#layout": "./src/layouts/Layout.astro",
+      };
+      if (features.includes("solid") && features.includes("tailwind")) {
+        packageJson.imports["#app"] = "./src/components/App.tsx";
+      }
+      break;
+    }
+    default: {
+      const hasOxlint = features.includes("oxlint");
+      const hasTsgolint = features.includes("tsgolint");
+
+      if (!hasOxlint && !hasTsgolint) {
+        delete packageJson.scripts["lint"];
+      } else {
+        packageJson.scripts["lint"] = "oxlint";
+      }
+
+      if (features.includes("oxfmt")) {
+        packageJson.scripts["format"] = "oxfmt";
+      }
+
+      if (features.includes("tsdown")) {
+        packageJson.name = "";
+        packageJson.scripts["build"] = "tsdown";
+        packageJson.scripts["prepublishOnly"] = "bun run build";
+      } else {
+        packageJson.private = true;
+      }
     }
   }
 
