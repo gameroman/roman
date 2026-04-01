@@ -12,7 +12,7 @@ interface PackageJsonScripts {
 interface PackageJson {
   name?: string;
   private?: boolean;
-  type: string;
+  type: "module";
   imports?: PackageJsonImports;
   scripts: PackageJsonScripts;
 }
@@ -25,10 +25,7 @@ const ASTRO_SCRIPTS: PackageJsonScripts = {
   deploy: "wrangler deploy",
 };
 
-const TEMPLATE_SCRIPTS: Record<Template, PackageJsonScripts> = {
-  default: { test: "bun test" },
-  executable: { test: "bun test" },
-  lib: { test: "bun test" },
+const TEMPLATE_SCRIPTS: Partial<Record<Template, PackageJsonScripts>> = {
   astro: ASTRO_SCRIPTS,
 };
 
@@ -36,7 +33,7 @@ function generatePackageJson(config: ResolvedConfig): PackageJson {
   const template = config.template;
   const features = config.features ?? [];
 
-  const templateScripts = TEMPLATE_SCRIPTS[template];
+  const templateScripts = TEMPLATE_SCRIPTS[template] ?? { test: "bun test" };
   const scripts: PackageJsonScripts = {};
   for (const [key, value] of Object.entries(templateScripts)) {
     scripts[key] = value;
