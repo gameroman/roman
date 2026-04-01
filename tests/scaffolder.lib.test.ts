@@ -279,6 +279,18 @@ const description = "description";
   <App client:load />
 </Layout>
 `,
+  apptsxtailwind: `import { createSignal } from "solid-js";
+
+function App() {
+  return (
+    <main class="container mx-auto p-4">
+      <h1 class="text-2xl font-bold mb-4">App</h1>
+    </main>
+  );
+}
+
+export default App;
+`,
 } as const;
 
 describe("getScaffoldContent", () => {
@@ -483,6 +495,10 @@ describe("getScaffoldContent", () => {
           {
             path: "src/layouts/Layout.astro",
             content: astroFiles.layouttailwind,
+          },
+          {
+            path: "src/components/App.tsx",
+            content: astroFiles.apptsxtailwind,
           },
           {
             path: "src/pages/index.astro",
