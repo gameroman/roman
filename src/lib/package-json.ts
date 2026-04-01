@@ -1,13 +1,21 @@
 import type { ResolvedConfig } from "./resolver";
 
+interface PackageJsonImports {
+  [key: string]: string;
+}
+
+interface PackageJsonScripts {
+  [key: string]: string;
+}
+
 interface PackageJson {
   private: boolean;
   type: string;
-  imports?: Record<string, string>;
-  scripts: Record<string, string>;
+  imports?: PackageJsonImports;
+  scripts: PackageJsonScripts;
 }
 
-const ASTRO_SCRIPTS: Record<string, string> = {
+const ASTRO_SCRIPTS: PackageJsonScripts = {
   lint: "biome check",
   format: "biome check --fix",
   dev: "astro dev",
@@ -15,7 +23,7 @@ const ASTRO_SCRIPTS: Record<string, string> = {
   deploy: "wrangler deploy",
 };
 
-const TEMPLATE_SCRIPTS: Record<string, Record<string, string | undefined>> = {
+const TEMPLATE_SCRIPTS: Record<string, PackageJsonScripts> = {
   default: { test: "bun test" },
   executable: { test: "bun test" },
   astro: ASTRO_SCRIPTS,
@@ -26,16 +34,12 @@ function generatePackageJson(config: ResolvedConfig): PackageJson {
   const features = config.features ?? [];
 
   const templateScripts = TEMPLATE_SCRIPTS[template] ?? {};
-  const scripts: Record<string, string> = {};
+  const scripts: PackageJsonScripts = {};
   for (const [key, value] of Object.entries(templateScripts)) {
-    if (value !== undefined) scripts[key] = value;
+    scripts[key] = value;
   }
 
-  const base: PackageJson = {
-    private: true,
-    type: "module",
-    scripts,
-  };
+  const base: PackageJson = { private: true, type: "module", scripts };
 
   if (template === "astro") {
     base.imports = {
@@ -84,7 +88,7 @@ function serializePackageJson(pkg: PackageJson): string {
     if (key === "imports") {
       obj = Object.keys(value)
         .toSorted()
-        .reduce<Record<string, string>>((acc, k) => {
+        .reduce<PackageJsonImports>((acc, k) => {
           acc[k] = value[k] as string;
           return acc;
         }, {});

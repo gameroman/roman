@@ -2,19 +2,21 @@ import { $ } from "bun";
 
 import type { Dependencies } from "./resolver";
 
-async function installDependencies(dependencies: Dependencies) {
-  const defaultDeps = dependencies.default ?? [];
-  const devDeps = dependencies.dev ?? [];
+async function installDependencies(dependencies: Dependencies, install = true) {
+  const deps = dependencies.default;
+  const devDeps = dependencies.dev;
 
-  if (defaultDeps.length > 0) {
-    const defaultDepsArg = defaultDeps.join(" ");
-    await $`bun add ${{ raw: defaultDepsArg }}`;
+  if (deps) {
+    await $`bun add ${{ raw: deps.join(" ") }} --lockfile-only`;
   }
-  if (devDeps.length > 0) {
-    const devDepsArg = devDeps.join(" ");
-    await $`bun add -d ${{ raw: devDepsArg }}`;
+
+  if (devDeps) {
+    await $`bun add -d ${{ raw: devDeps.join(" ") }} --lockfile-only`;
   }
-  if (defaultDeps.length > 0 || devDeps.length > 0) {
+
+  if (!install) return;
+
+  if (deps || devDeps) {
     await $`bun install`;
   }
 }
