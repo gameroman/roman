@@ -25,7 +25,7 @@
     "test": "bun test --dots",
     "test:run": "bun run --sequential test:check test:update",
     "test:check": "SKIP_SNAPSHOTS=1 bun run test",
-    "test:update": "bun test --dots -u",
+    "test:update": "bun run test -u",
     "lint": "oxlint",
     "format": "oxfmt",
     "build": "tsdown",
