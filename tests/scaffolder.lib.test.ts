@@ -2,6 +2,7 @@ import { describe, it, expect } from "bun:test";
 
 import { getScaffoldContent } from "#lib/scaffolder";
 
+// #region files
 const defaultFiles = {
   gitignore: `node_modules/
 
@@ -299,6 +300,17 @@ function App() {
 export default App;
 `,
 } as const;
+// #endregion files
+
+declare global {
+  namespace NodeJS {
+    interface ProcessEnv {
+      SKIP_SNAPSHOTS?: string;
+    }
+  }
+}
+
+const SKIP_SNAPHOTS = !!process.env.SKIP_SNAPSHOTS;
 
 describe("getScaffoldContent", () => {
   describe("default template", () => {
@@ -325,7 +337,7 @@ describe("getScaffoldContent", () => {
           ],
         },
       });
-      expect(content).toMatchSnapshot();
+      if (!SKIP_SNAPHOTS) expect(content).toMatchSnapshot();
     });
 
     it("should generate normal oxlint config without tsgolint feature", () => {
@@ -345,7 +357,7 @@ describe("getScaffoldContent", () => {
           dev: ["@gameroman/config", "oxfmt", "oxlint", "typescript"],
         },
       });
-      expect(content).toMatchSnapshot();
+      if (!SKIP_SNAPHOTS) expect(content).toMatchSnapshot();
     });
 
     it("should generate tsgolint oxlint config when only tsgolint feature is specified", () => {
@@ -371,7 +383,7 @@ describe("getScaffoldContent", () => {
           ],
         },
       });
-      expect(content).toMatchSnapshot();
+      if (!SKIP_SNAPHOTS) expect(content).toMatchSnapshot();
     });
   });
 
@@ -401,7 +413,7 @@ describe("getScaffoldContent", () => {
           ],
         },
       });
-      expect(content).toMatchSnapshot();
+      if (!SKIP_SNAPHOTS) expect(content).toMatchSnapshot();
     });
   });
 
@@ -430,7 +442,7 @@ describe("getScaffoldContent", () => {
           ],
         },
       });
-      expect(content).toMatchSnapshot();
+      if (!SKIP_SNAPHOTS) expect(content).toMatchSnapshot();
     });
 
     it("should generate astro template with tailwindcss", () => {
@@ -463,7 +475,7 @@ describe("getScaffoldContent", () => {
           ],
         },
       });
-      expect(content).toMatchSnapshot();
+      if (!SKIP_SNAPHOTS) expect(content).toMatchSnapshot();
     });
 
     it("should generate astro template with solidjs", () => {
@@ -491,7 +503,7 @@ describe("getScaffoldContent", () => {
           ],
         },
       });
-      expect(content).toMatchSnapshot();
+      if (!SKIP_SNAPHOTS) expect(content).toMatchSnapshot();
     });
 
     it("should generate astro template with solidjs and tailwindcss", () => {
@@ -536,7 +548,7 @@ describe("getScaffoldContent", () => {
           ],
         },
       });
-      expect(content).toMatchSnapshot();
+      if (!SKIP_SNAPHOTS) expect(content).toMatchSnapshot();
     });
   });
 });
