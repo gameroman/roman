@@ -22,7 +22,9 @@
   },
   "scripts": {
     "u": "bun run --sequential format lint build test",
-    "test": "bun test --dots",
+    "test": "bun run --sequential test:check test:update",
+    "test:check": "bun test --dots",
+    "test:update": "bun test --dots -u",
     "lint": "oxlint",
     "format": "oxfmt",
     "build": "tsdown",

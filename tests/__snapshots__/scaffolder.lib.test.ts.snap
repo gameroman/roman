@@ -209,7 +209,7 @@ export default config;
 }
 `;
 
-exports[`getScaffoldContent default template should generate basic files for default template with tsdown 1`] = `
+exports[`getScaffoldContent lib template should generate basic files for lib template 1`] = `
 {
   "dependencies": {
     "dev": [
@@ -269,7 +269,7 @@ export default config;
     {
       "content": 
 "{
-  "extends": "@gameroman/config/tsconfig",
+  "extends": "@gameroman/config/tsconfig/isolated",
   "compilerOptions": {
     "types": ["bun"]
   }
@@ -904,91 +904,6 @@ export default {
 "
 ,
       "path": "tsconfig.json",
-    },
-  ],
-}
-`;
-
-exports[`getScaffoldContent lib template should generate basic files for lib template 1`] = `
-{
-  "dependencies": {
-    "dev": [
-      "@gameroman/config",
-      "oxfmt",
-      "oxlint",
-      "oxlint-tsgolint",
-      "tsdown",
-      "typescript",
-    ],
-  },
-  "files": [
-    {
-      "content": 
-"node_modules/
-
-dist/
-"
-,
-      "path": ".gitignore",
-    },
-    {
-      "content": 
-"import { config } from "@gameroman/config/oxfmt";
-
-export default config;
-"
-,
-      "path": "oxfmt.config.ts",
-    },
-    {
-      "content": 
-"import { config } from "@gameroman/config/oxlint/typeaware";
-
-export default config;
-"
-,
-      "path": "oxlint.config.ts",
-    },
-    {
-      "content": 
-"{
-  "name": "",
-  "type": "module",
-  "scripts": {
-    "test": "bun test",
-    "lint": "oxlint",
-    "format": "oxfmt",
-    "build": "tsdown",
-    "prepublishOnly": "bun run build"
-  }
-}
-"
-,
-      "path": "package.json",
-    },
-    {
-      "content": 
-"{
-  "extends": "@gameroman/config/tsconfig",
-  "compilerOptions": {
-    "types": ["bun"]
-  }
-}
-"
-,
-      "path": "tsconfig.json",
-    },
-    {
-      "content": 
-"import { defineConfig } from "tsdown";
-
-export default defineConfig({
-  dts: true,
-  exports: true,
-});
-"
-,
-      "path": "tsdown.config.ts",
     },
   ],
 }

@@ -26,6 +26,14 @@ const BIOME_ASTRO = `{
 }
 `;
 
+const TSCONFIG_LIB = `{
+  "extends": "@gameroman/config/tsconfig/isolated",
+  "compilerOptions": {
+    "types": ["bun"]
+  }
+}
+`;
+
 const TSCONFIG_DEFAULT = `{
   "extends": "@gameroman/config/tsconfig",
   "compilerOptions": {
@@ -126,7 +134,13 @@ const TEMPLATES: Record<Template, TemplateGenerator> = {
     });
   },
   lib(files, config) {
-    TEMPLATES.default(files, config);
+    files.push({ path: ".gitignore", content: GITIGNORE_DEFAULT });
+    files.push({ path: "tsconfig.json", content: TSCONFIG_LIB });
+    const pkg = generatePackageJson(config);
+    files.push({
+      path: "package.json",
+      content: serializePackageJson(pkg),
+    });
   },
   executable(files, config) {
     TEMPLATES.default(files, config);
