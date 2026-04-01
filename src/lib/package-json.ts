@@ -76,18 +76,27 @@ function serializePackageJson(pkg: PackageJson): string {
   for (const key of keys) {
     const value = pkg[key];
     if (value === undefined) continue;
-    if (typeof value === "object") {
-      const serialized = JSON.stringify(value, null, 2);
-      const lines = serialized.split("\n");
-      const body = lines.slice(1, -1).join("\n");
-      const indentedBody = body
-        .split("\n")
-        .map((line) => `  ${line}`)
-        .join("\n");
-      parts.push(`  "${key}": {\n${indentedBody}\n  }`);
-    } else {
+    if (typeof value !== "object") {
       parts.push(`  "${key}": ${JSON.stringify(value)}`);
+      continue;
     }
+    let obj = value;
+    if (key === "imports") {
+      obj = Object.keys(value)
+        .toSorted()
+        .reduce<Record<string, string>>((acc, k) => {
+          acc[k] = value[k] as string;
+          return acc;
+        }, {});
+    }
+    const serialized = JSON.stringify(obj, null, 2);
+    const lines = serialized.split("\n");
+    const body = lines.slice(1, -1).join("\n");
+    const indentedBody = body
+      .split("\n")
+      .map((line) => `  ${line}`)
+      .join("\n");
+    parts.push(`  "${key}": {\n${indentedBody}\n  }`);
   }
 
   return `{\n${parts.join(",\n")}\n}\n`;

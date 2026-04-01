@@ -688,6 +688,23 @@ const { title, description } = Astro.props;
     },
     {
       "content": 
+"---
+import App from "#app";
+import Layout from "#layout";
+
+const title = "title";
+const description = "description";
+---
+
+<Layout {title} {description}>
+  <App client:load />
+</Layout>
+"
+,
+      "path": "src/pages/index.astro",
+    },
+    {
+      "content": 
 "@import "tailwindcss";
 "
 ,
@@ -737,6 +754,7 @@ export default defineConfig({
   "private": true,
   "type": "module",
   "imports": {
+    "#app": "./src/components/App.tsx",
     "#layout": "./src/layouts/Layout.astro",
     "#styles": "./src/styles/global.css"
   },
