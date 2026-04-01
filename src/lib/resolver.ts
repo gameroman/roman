@@ -1,4 +1,4 @@
-type Template = "default" | "astro" | "executable";
+type Template = "default" | "lib" | "astro" | "executable";
 
 type Feature =
   | "biome"

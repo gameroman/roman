@@ -38,7 +38,7 @@ export default config;
 `,
 } as const;
 
-const tsdownFiles = {
+const libFiles = {
   tsdown: `import { defineConfig } from "tsdown";
 
 export default defineConfig({
@@ -366,10 +366,12 @@ describe("getScaffoldContent", () => {
       });
       expect(content).toMatchSnapshot();
     });
+  });
 
-    it("should generate basic files for default template with tsdown", () => {
+  describe("lib template", () => {
+    it("should generate basic files for lib template", () => {
       const content = getScaffoldContent({
-        template: "default",
+        template: "lib",
         features: ["oxfmt", "oxlint", "tsdown", "tsgolint"],
       });
       expect(content).toEqual({
@@ -377,9 +379,9 @@ describe("getScaffoldContent", () => {
           { path: ".gitignore", content: defaultFiles.gitignore },
           { path: "oxfmt.config.ts", content: defaultFiles.oxfmt },
           { path: "oxlint.config.ts", content: defaultFiles.tsgolint },
-          { path: "package.json", content: tsdownFiles.packagejson },
+          { path: "package.json", content: libFiles.packagejson },
           { path: "tsconfig.json", content: defaultFiles.tsconfig },
-          { path: "tsdown.config.ts", content: tsdownFiles.tsdown },
+          { path: "tsdown.config.ts", content: libFiles.tsdown },
         ],
         dependencies: {
           dev: [

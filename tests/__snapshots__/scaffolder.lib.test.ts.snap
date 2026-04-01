@@ -252,7 +252,7 @@ export default config;
     {
       "content": 
 "{
-  "private": true,
+  "name": "",
   "type": "module",
   "scripts": {
     "test": "bun test",

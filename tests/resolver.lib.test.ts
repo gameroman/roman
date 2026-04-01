@@ -17,17 +17,19 @@ describe("resolveConfig", () => {
         features: ["oxfmt", "oxlint", "tsgolint"],
       });
     });
+  });
 
-    it("should resolve tsdown", () => {
-      expect(resolveConfig(["tsdown"])).toEqual({
-        template: "default",
+  describe("lib template", () => {
+    it("should resolve lib", () => {
+      expect(resolveConfig(["lib"])).toEqual({
+        template: "lib",
         features: ["oxfmt", "oxlint", "tsdown", "tsgolint"],
       });
     });
 
-    it("should resolve tsdown tsgolint (tsgolint already included)", () => {
-      expect(resolveConfig(["tsdown", "tsgolint"])).toEqual({
-        template: "default",
+    it("should resolve lib with tsgolint (tsgolint already included)", () => {
+      expect(resolveConfig(["lib", "tsgolint"])).toEqual({
+        template: "lib",
         features: ["oxfmt", "oxlint", "tsdown", "tsgolint"],
       });
     });

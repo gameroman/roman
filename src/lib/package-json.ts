@@ -9,7 +9,8 @@ interface PackageJsonScripts {
 }
 
 interface PackageJson {
-  private: boolean;
+  name?: string;
+  private?: boolean;
   type: string;
   imports?: PackageJsonImports;
   scripts: PackageJsonScripts;
@@ -39,14 +40,15 @@ function generatePackageJson(config: ResolvedConfig): PackageJson {
     scripts[key] = value;
   }
 
-  const base: PackageJson = { private: true, type: "module", scripts };
+  const packageJson: PackageJson = { type: "module", scripts };
 
   if (template === "astro") {
-    base.imports = {
+    packageJson.private = true;
+    packageJson.imports = {
       "#layout": "./src/layouts/Layout.astro",
     };
     if (features.includes("solid") && features.includes("tailwind")) {
-      base.imports["#app"] = "./src/components/App.tsx";
+      packageJson.imports["#app"] = "./src/components/App.tsx";
     }
   }
 
@@ -55,26 +57,29 @@ function generatePackageJson(config: ResolvedConfig): PackageJson {
     const hasTsgolint = features.includes("tsgolint");
 
     if (!hasOxlint && !hasTsgolint) {
-      delete base.scripts["lint"];
+      delete packageJson.scripts["lint"];
     } else {
-      base.scripts["lint"] = "oxlint";
+      packageJson.scripts["lint"] = "oxlint";
     }
 
     if (features.includes("oxfmt")) {
-      base.scripts["format"] = "oxfmt";
+      packageJson.scripts["format"] = "oxfmt";
     }
 
     if (features.includes("tsdown")) {
-      base.scripts["build"] = "tsdown";
-      base.scripts["prepublishOnly"] = "bun run build";
+      packageJson.name = "";
+      packageJson.scripts["build"] = "tsdown";
+      packageJson.scripts["prepublishOnly"] = "bun run build";
+    } else {
+      packageJson.private = true;
     }
   }
 
-  return base;
+  return packageJson;
 }
 
 function serializePackageJson(pkg: PackageJson): string {
-  const keys = ["private", "type", "imports", "scripts"] as const;
+  const keys = ["name", "private", "type", "imports", "scripts"] as const;
   const parts: string[] = [];
 
   for (const key of keys) {

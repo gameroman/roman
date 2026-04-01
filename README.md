@@ -1,15 +1,9 @@
 # TypeScript project creator
 
-## Simple template
+## Library
 
 ```sh
-bunx roman
-```
-
-## Library template
-
-```sh
-bunx roman
+bunx roman lib
 ```
 
 ## Astro app
