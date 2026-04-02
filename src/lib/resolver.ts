@@ -21,7 +21,7 @@ function getTemplate(args: string[]) {
     ? "astro"
     : args.includes("exe") || args.includes("tg")
       ? "executable"
-      : args.includes("lib")
+      : args.includes("lib") || args.includes("tsdown")
         ? "lib"
         : "default";
 }

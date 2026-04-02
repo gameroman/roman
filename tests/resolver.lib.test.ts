@@ -33,6 +33,13 @@ describe("resolveConfig", () => {
         features: ["oxfmt", "oxlint", "tsdown", "tsgolint"],
       });
     });
+
+    it("should resolve tsdown", () => {
+      expect(resolveConfig(["tsdown"])).toEqual({
+        template: "lib",
+        features: ["oxfmt", "oxlint", "tsdown", "tsgolint"],
+      });
+    });
   });
 
   describe("executable template", () => {
