@@ -998,3 +998,79 @@ export default {
   ],
 }
 `;
+
+exports[`getScaffoldContent exe template should generate executable template with telegram 1`] = `
+{
+  "dependencies": {
+    "default": [
+      "@grammyjs/runner",
+      "grammy",
+    ],
+    "dev": [
+      "@gameroman/config",
+      "oxfmt",
+      "oxlint",
+      "oxlint-tsgolint",
+      "typescript",
+    ],
+  },
+  "files": [
+    {
+      "content": 
+"node_modules/
+
+dist/
+"
+,
+      "path": ".gitignore",
+    },
+    {
+      "content": 
+"import { config } from "@gameroman/config/oxfmt";
+
+export default config;
+"
+,
+      "path": "oxfmt.config.ts",
+    },
+    {
+      "content": 
+"import { config } from "@gameroman/config/oxlint/typeaware";
+
+export default config;
+"
+,
+      "path": "oxlint.config.ts",
+    },
+    {
+      "content": 
+"{
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "bun test",
+    "lint": "oxlint",
+    "format": "oxfmt",
+    "dev": "NODE_ENV=development bun run ./src/index.ts",
+    "build": "NODE_ENV=production bun build --minify --compile ./src/index.ts --outfile=dist/bot --target=bun-linux-arm64"
+  }
+}
+"
+,
+      "path": "package.json",
+    },
+    {
+      "content": 
+"{
+  "extends": "@gameroman/config/tsconfig",
+  "compilerOptions": {
+    "types": ["bun"]
+  }
+}
+"
+,
+      "path": "tsconfig.json",
+    },
+  ],
+}
+`;

@@ -333,6 +333,10 @@ function getScaffoldContent(config: ResolvedConfig): ScaffoldContent {
         devDeps.add("oxlint").add("oxlint-tsgolint");
         continue;
       }
+      case "telegram": {
+        deps.add("@grammyjs/runner").add("grammy");
+        continue;
+      }
     }
   }
 
