@@ -46,11 +46,10 @@ describe("generateAstroConfig", () => {
 
 describe("serializeAstroConfig", () => {
   it("should serialize basic config with static output", () => {
-    const result = serializeAstroConfig({
-      output: "static",
-      integrations: [],
-      vitePlugins: [],
-    });
+    const result = serializeAstroConfig(
+      { output: "static", integrations: [], vitePlugins: [] },
+      [],
+    );
     expect(result).toBe(`import { defineConfig } from "astro/config";
 
 export default defineConfig({
@@ -60,11 +59,10 @@ export default defineConfig({
   });
 
   it("should serialize config with solid integration", () => {
-    const result = serializeAstroConfig({
-      output: "static",
-      integrations: ["solid()"],
-      vitePlugins: [],
-    });
+    const result = serializeAstroConfig(
+      { output: "static", integrations: ["solid()"], vitePlugins: [] },
+      ["solid"],
+    );
     expect(result).toBe(`import solid from "@astrojs/solid-js";
 import { defineConfig } from "astro/config";
 
@@ -76,11 +74,10 @@ export default defineConfig({
   });
 
   it("should serialize config with tailwind vite plugin", () => {
-    const result = serializeAstroConfig({
-      output: "static",
-      integrations: [],
-      vitePlugins: ["tailwindcss()"],
-    });
+    const result = serializeAstroConfig(
+      { output: "static", integrations: [], vitePlugins: ["tailwindcss()"] },
+      ["tailwind"],
+    );
     expect(result).toBe(`import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "astro/config";
 
@@ -92,11 +89,14 @@ export default defineConfig({
   });
 
   it("should serialize config with both solid and tailwind", () => {
-    const result = serializeAstroConfig({
-      output: "static",
-      integrations: ["solid()"],
-      vitePlugins: ["tailwindcss()"],
-    });
+    const result = serializeAstroConfig(
+      {
+        output: "static",
+        integrations: ["solid()"],
+        vitePlugins: ["tailwindcss()"],
+      },
+      ["solid", "tailwind"],
+    );
     expect(result).toBe(`import solid from "@astrojs/solid-js";
 import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "astro/config";

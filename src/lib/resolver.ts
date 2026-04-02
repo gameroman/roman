@@ -8,7 +8,8 @@ type Feature =
   | "solid"
   | "tailwind"
   | "wrangler"
-  | "tsdown";
+  | "tsdown"
+  | "telegram";
 
 interface ResolvedConfig {
   template: Template;
@@ -16,11 +17,11 @@ interface ResolvedConfig {
 }
 
 function getTemplate(args: string[]) {
-  return args.includes("astro")
+  return args.includes("astro") || args.includes("solid")
     ? "astro"
-    : args.includes("exe")
+    : args.includes("exe") || args.includes("tg")
       ? "executable"
-      : args.includes("lib")
+      : args.includes("lib") || args.includes("tsdown")
         ? "lib"
         : "default";
 }
@@ -34,12 +35,13 @@ function resolveConfig(args: string[]): ResolvedConfig {
     if (arg === "solid") {
       features.add("solid");
     }
+    if (arg === "tg") {
+      features.add("telegram");
+    }
   }
 
   if (template === "astro") {
-    features.add("biome");
-    features.add("tailwind");
-    features.add("wrangler");
+    features.add("biome").add("tailwind").add("wrangler");
   } else {
     features.add("oxfmt").add("oxlint").add("tsgolint");
   }

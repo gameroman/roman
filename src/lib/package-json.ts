@@ -1,4 +1,5 @@
 import type { ResolvedConfig, Template } from "./resolver";
+import { sortKeys, sortKeysSpecificOrder } from "./sort-keys";
 
 interface PackageJsonImports {
   [key: string]: string;
@@ -11,7 +12,7 @@ interface PackageJsonScripts {
 interface PackageJson {
   name?: string;
   private?: boolean;
-  type: string;
+  type: "module";
   imports?: PackageJsonImports;
   scripts: PackageJsonScripts;
 }
@@ -24,18 +25,25 @@ const ASTRO_SCRIPTS: PackageJsonScripts = {
   deploy: "wrangler deploy",
 };
 
-const TEMPLATE_SCRIPTS: Record<Template, PackageJsonScripts> = {
-  default: { test: "bun test" },
-  executable: { test: "bun test" },
-  lib: { test: "bun test" },
+const EXECUTABLE_SCRIPTS: PackageJsonScripts = {
+  test: "bun test",
+  lint: "oxlint",
+  format: "oxfmt",
+  dev: "NODE_ENV=development bun run ./src/index.ts",
+  build:
+    "NODE_ENV=production bun build --minify --compile ./src/index.ts --outfile=dist/bot --target=bun-linux-arm64",
+};
+
+const TEMPLATE_SCRIPTS: Partial<Record<Template, PackageJsonScripts>> = {
   astro: ASTRO_SCRIPTS,
+  executable: EXECUTABLE_SCRIPTS,
 };
 
 function generatePackageJson(config: ResolvedConfig): PackageJson {
   const template = config.template;
   const features = config.features ?? [];
 
-  const templateScripts = TEMPLATE_SCRIPTS[template];
+  const templateScripts = TEMPLATE_SCRIPTS[template] ?? { test: "bun test" };
   const scripts: PackageJsonScripts = {};
   for (const [key, value] of Object.entries(templateScripts)) {
     scripts[key] = value;
@@ -78,16 +86,17 @@ function generatePackageJson(config: ResolvedConfig): PackageJson {
     }
   }
 
-  return packageJson;
-}
+  packageJson.scripts = sortKeysSpecificOrder(packageJson.scripts, [
+    "test",
+    "lint",
+    "format",
+    "dev",
+    "build",
+    "deploy",
+    "prepublishOnly",
+  ]);
 
-function sortKeys<T>(obj: Record<string, T>) {
-  return Object.keys(obj)
-    .toSorted()
-    .reduce<Record<string, T>>((acc, k) => {
-      acc[k] = obj[k] as T;
-      return acc;
-    }, {});
+  return packageJson;
 }
 
 function serializePackageJson(pkg: PackageJson): string {

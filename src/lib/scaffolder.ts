@@ -61,6 +61,48 @@ const TSCONFIG_ASTRO_SOLID = `{
 }
 `;
 
+const ASTRO_LAYOUT = `
+interface Props {
+  title: string;
+  description: string;
+  children: unknown;
+}
+
+const canonical = Astro.site
+  ? new URL(Astro.url.pathname, Astro.site)
+  : undefined;
+
+const { title, description } = Astro.props;
+---
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="referrer" content="no-referrer-when-downgrade" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+
+    <link rel="canonical" href={canonical} />
+  </head>
+
+  <body>
+    <slot />
+  </body>
+</html>
+`;
+
 const GLOBAL_CSS_TAILWIND = `@import "tailwindcss";
 `;
 
@@ -147,8 +189,9 @@ const TEMPLATES: Record<Template, TemplateGenerator> = {
   },
   astro(files, config) {
     files.push({ path: ".gitignore", content: GITIGNORE_ASTRO });
-    const hasSolid = config.features?.includes("solid");
-    const hasTailwind = config.features?.includes("tailwind");
+    const features = config.features ?? [];
+    const hasSolid = features.includes("solid");
+    const hasTailwind = features.includes("tailwind");
     files.push({
       path: "tsconfig.json",
       content: hasSolid ? TSCONFIG_ASTRO_SOLID : TSCONFIG_ASTRO,
@@ -160,49 +203,9 @@ const TEMPLATES: Record<Template, TemplateGenerator> = {
     }
     files.push({ path: "package.json", content: serializePackageJson(pkg) });
     const astroOptions = generateAstroConfig(config);
-    const astroContent = serializeAstroConfig(astroOptions);
+    const astroContent = serializeAstroConfig(astroOptions, features);
     files.push({ path: "astro.config.ts", content: astroContent });
-    const layoutContent = `---${hasTailwind ? '\nimport "#styles";\n' : ""}
-interface Props {
-  title: string;
-  description: string;
-  children: unknown;
-}
-
-const canonical = Astro.site
-  ? new URL(Astro.url.pathname, Astro.site)
-  : undefined;
-
-const { title, description } = Astro.props;
----
-
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="referrer" content="no-referrer-when-downgrade" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
-    />
-
-    <title>{title}</title>
-    <meta name="description" content={description} />
-
-    <meta property="og:title" content={title} />
-    <meta property="og:description" content={description} />
-    <meta property="og:url" content={canonical} />
-
-    <meta name="twitter:title" content={title} />
-    <meta name="twitter:description" content={description} />
-
-    <link rel="canonical" href={canonical} />
-  </head>
-
-  <body>
-    <slot />
-  </body>
-</html>
-`;
+    const layoutContent = `---${hasTailwind ? '\nimport "#styles";\n' : ""}${ASTRO_LAYOUT}`;
     files.push({
       path: "src/layouts/Layout.astro",
       content: layoutContent,
@@ -328,6 +331,10 @@ function getScaffoldContent(config: ResolvedConfig): ScaffoldContent {
       }
       case "tsgolint": {
         devDeps.add("oxlint").add("oxlint-tsgolint");
+        continue;
+      }
+      case "telegram": {
+        deps.add("@grammyjs/runner").add("grammy");
         continue;
       }
     }
