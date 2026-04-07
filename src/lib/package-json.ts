@@ -12,6 +12,7 @@ interface PackageJsonScripts {
 interface PackageJson {
   name?: string;
   private?: boolean;
+  version?: string;
   type: "module";
   imports?: PackageJsonImports;
   scripts: PackageJsonScripts;
@@ -78,6 +79,7 @@ function generatePackageJson(config: ResolvedConfig): PackageJson {
 
       if (features.includes("tsdown")) {
         packageJson.name = "";
+        packageJson.version = "0.0.0";
         packageJson.scripts["build"] = "tsdown";
         packageJson.scripts["prepublishOnly"] = "bun run build";
       } else {
@@ -100,7 +102,14 @@ function generatePackageJson(config: ResolvedConfig): PackageJson {
 }
 
 function serializePackageJson(pkg: PackageJson): string {
-  const keys = ["name", "private", "type", "imports", "scripts"] as const;
+  const keys = [
+    "name",
+    "private",
+    "version",
+    "type",
+    "imports",
+    "scripts",
+  ] as const satisfies (keyof PackageJson)[];
   const parts: string[] = [];
 
   for (const key of keys) {

@@ -56,6 +56,7 @@ export default defineConfig({
 `,
   packagejson: `{
   "name": "",
+  "version": "0.0.0",
   "type": "module",
   "scripts": {
     "test": "bun test",
