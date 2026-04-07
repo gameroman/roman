@@ -82,6 +82,17 @@ const exeFiles = {
   }
 }
 `,
+  indexts: `console.log("Hello, world!");
+`,
+  indextstelegram: `import { Bot } from "grammy";
+import { run } from "@grammyjs/runner";
+
+const bot = new Bot(process.env.BOT_TOKEN ?? "");
+
+bot.command("start", (ctx) => ctx.reply("Hello!"));
+
+run(bot);
+`,
 } as const;
 
 const astroFiles = {
@@ -454,6 +465,7 @@ describe("getScaffoldContent", () => {
       });
       expect(content).toEqual({
         files: [
+          { path: "src/index.ts", content: exeFiles.indexts },
           { path: ".gitignore", content: defaultFiles.gitignore },
           { path: "oxfmt.config.ts", content: defaultFiles.oxfmt },
           { path: "oxlint.config.ts", content: defaultFiles.tsgolint },
@@ -480,6 +492,7 @@ describe("getScaffoldContent", () => {
       });
       expect(content).toEqual({
         files: [
+          { path: "src/index.ts", content: exeFiles.indextstelegram },
           { path: ".gitignore", content: defaultFiles.gitignore },
           { path: "oxfmt.config.ts", content: defaultFiles.oxfmt },
           { path: "oxlint.config.ts", content: defaultFiles.tsgolint },

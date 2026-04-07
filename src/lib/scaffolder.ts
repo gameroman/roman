@@ -106,6 +106,19 @@ const { title, description } = Astro.props;
 const GLOBAL_CSS_TAILWIND = `@import "tailwindcss";
 `;
 
+const SRC_INDEX_DEFAULT = `console.log("Hello, world!");
+`;
+
+const SRC_INDEX_TELEGRAM = `import { Bot } from "grammy";
+import { run } from "@grammyjs/runner";
+
+const bot = new Bot(process.env.BOT_TOKEN ?? "");
+
+bot.command("start", (ctx) => ctx.reply("Hello!"));
+
+run(bot);
+`;
+
 type FileGenerator = (files: FileInfo[], config: ResolvedConfig) => void;
 
 const FEATURES: Partial<Record<Feature, FileGenerator>> = {
@@ -186,6 +199,11 @@ const TEMPLATES: Record<Template, TemplateGenerator> = {
   },
   executable(files, config) {
     TEMPLATES.default(files, config);
+    const hasTelegram = config.features?.includes("telegram");
+    files.push({
+      path: "src/index.ts",
+      content: hasTelegram ? SRC_INDEX_TELEGRAM : SRC_INDEX_DEFAULT,
+    });
   },
   astro(files, config) {
     files.push({ path: ".gitignore", content: GITIGNORE_ASTRO });

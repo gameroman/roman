@@ -308,7 +308,14 @@ exports[`getScaffoldContent exe template should generate basic files for exe tem
   },
   "files": [
     {
-      "content": 
+      "content":
+"console.log("Hello, world!");
+"
+,
+      "path": "src/index.ts",
+    },
+    {
+      "content":
 "node_modules/
 
 dist/
@@ -384,7 +391,21 @@ exports[`getScaffoldContent exe template should generate executable template wit
   },
   "files": [
     {
-      "content": 
+      "content":
+"import { Bot } from "grammy";
+import { run } from "@grammyjs/runner";
+
+const bot = new Bot(process.env.BOT_TOKEN ?? "");
+
+bot.command("start", (ctx) => ctx.reply("Hello!"));
+
+run(bot);
+"
+,
+      "path": "src/index.ts",
+    },
+    {
+      "content":
 "node_modules/
 
 dist/
