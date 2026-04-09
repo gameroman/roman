@@ -106,6 +106,41 @@ const { title, description } = Astro.props;
 const GLOBAL_CSS_TAILWIND = `@import "tailwindcss";
 `;
 
+const TG_INDEX = `import { run } from "@grammyjs/runner";
+import { Bot, GrammyError } from "grammy";
+
+const TOKEN = process.env["TOKEN"];
+if (!TOKEN) throw new Error("Missing TOKEN env variable");
+
+const bot = new Bot(TOKEN);
+
+const m = bot.on("message");
+
+m.command("start", (ctx) => {
+  return ctx.reply("/help");
+});
+
+void bot.api.setMyCommands([
+  { command: "start", description: "Start" },
+  { command: "help", description: "Help" },
+]);
+
+bot.catch(({ ctx, error }) => {
+  console.error(\`Error while handling update \${ctx.update.update_id}:\`);
+  if (e instanceof GrammyError) {
+    console.error("Error in request:", error.description);
+  } else {
+    console.error("Unknown error:", error);
+  }
+});
+
+const runner = run(bot);
+const stopRunner = () => runner.isRunning() && runner.stop();
+
+process.once("SIGINT", stopRunner);
+process.once("SIGTERM", stopRunner);
+`;
+
 type FileGenerator = (files: FileInfo[], config: ResolvedConfig) => void;
 
 const FEATURES: Partial<Record<Feature, FileGenerator>> = {
@@ -160,6 +195,9 @@ const FEATURES: Partial<Record<Feature, FileGenerator>> = {
       content:
         "/** @type {import('tailwindcss').Config} */\nexport default {\n  content: { files: [\"./src/**/*.{ts,tsx,astro}\"] },\n};\n",
     });
+  },
+  telegram(files) {
+    files.push({ path: "src/index.ts", content: TG_INDEX });
   },
 };
 

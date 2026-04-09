@@ -77,7 +77,8 @@ describe("generatePackageJson", () => {
         lint: "oxlint",
         format: "oxfmt",
         dev: "NODE_ENV=development bun run ./src/index.ts",
-        build: "NODE_ENV=production bun build --minify --compile ./src/index.ts --outfile=dist/bot --target=bun-linux-arm64",
+        build:
+          "NODE_ENV=production bun build --minify --compile ./src/index.ts --outfile=dist/bot --target=bun-linux-arm64",
       });
     });
   });
