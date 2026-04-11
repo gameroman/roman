@@ -125,10 +125,6 @@ function serializePackageJson(pkg: PackageJson): string {
       parts.push(`  "${key}": ${JSON.stringify(value)}`);
       continue;
     }
-    if (Array.isArray(value)) {
-      parts.push(`  "${key}": ${JSON.stringify(value, null, 2)}`);
-      continue;
-    }
     let obj = value;
     if (key === "imports") {
       obj = sortKeys(obj);
