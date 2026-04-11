@@ -127,7 +127,7 @@ void bot.api.setMyCommands([
 
 bot.catch(({ ctx, error }) => {
   console.error(\`Error while handling update \${ctx.update.update_id}:\`);
-  if (e instanceof GrammyError) {
+  if (error instanceof GrammyError) {
     console.error("Error in request:", error.description);
   } else {
     console.error("Unknown error:", error);

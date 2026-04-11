@@ -107,7 +107,7 @@ void bot.api.setMyCommands([
 
 bot.catch(({ ctx, error }) => {
   console.error(\`Error while handling update \${ctx.update.update_id}:\`);
-  if (e instanceof GrammyError) {
+  if (error instanceof GrammyError) {
     console.error("Error in request:", error.description);
   } else {
     console.error("Unknown error:", error);
@@ -377,7 +377,7 @@ declare global {
   }
 }
 
-const SKIP_SNAPHOTS = !!process.env.SKIP_SNAPSHOTS;
+const SKIP_SNAPSHOTS = !!process.env.SKIP_SNAPSHOTS;
 
 describe("getScaffoldContent", () => {
   describe("default template", () => {
@@ -404,7 +404,7 @@ describe("getScaffoldContent", () => {
           ],
         },
       });
-      if (!SKIP_SNAPHOTS) expect(content).toMatchSnapshot();
+      if (!SKIP_SNAPSHOTS) expect(content).toMatchSnapshot();
     });
 
     it("should generate normal oxlint config without tsgolint feature", () => {
@@ -424,7 +424,7 @@ describe("getScaffoldContent", () => {
           dev: ["@gameroman/config", "oxfmt", "oxlint", "typescript"],
         },
       });
-      if (!SKIP_SNAPHOTS) expect(content).toMatchSnapshot();
+      if (!SKIP_SNAPSHOTS) expect(content).toMatchSnapshot();
     });
 
     it("should generate tsgolint oxlint config when only tsgolint feature is specified", () => {
@@ -450,7 +450,7 @@ describe("getScaffoldContent", () => {
           ],
         },
       });
-      if (!SKIP_SNAPHOTS) expect(content).toMatchSnapshot();
+      if (!SKIP_SNAPSHOTS) expect(content).toMatchSnapshot();
     });
   });
 
@@ -480,7 +480,7 @@ describe("getScaffoldContent", () => {
           ],
         },
       });
-      if (!SKIP_SNAPHOTS) expect(content).toMatchSnapshot();
+      if (!SKIP_SNAPSHOTS) expect(content).toMatchSnapshot();
     });
   });
 
@@ -508,7 +508,7 @@ describe("getScaffoldContent", () => {
           ],
         },
       });
-      if (!SKIP_SNAPHOTS) expect(content).toMatchSnapshot();
+      if (!SKIP_SNAPSHOTS) expect(content).toMatchSnapshot();
     });
 
     it("should generate executable template with telegram", () => {
@@ -536,7 +536,7 @@ describe("getScaffoldContent", () => {
           ],
         },
       });
-      if (!SKIP_SNAPHOTS) expect(content).toMatchSnapshot();
+      if (!SKIP_SNAPSHOTS) expect(content).toMatchSnapshot();
     });
   });
 
@@ -565,7 +565,7 @@ describe("getScaffoldContent", () => {
           ],
         },
       });
-      if (!SKIP_SNAPHOTS) expect(content).toMatchSnapshot();
+      if (!SKIP_SNAPSHOTS) expect(content).toMatchSnapshot();
     });
 
     it("should generate astro template with tailwindcss", () => {
@@ -599,7 +599,7 @@ describe("getScaffoldContent", () => {
           ],
         },
       });
-      if (!SKIP_SNAPHOTS) expect(content).toMatchSnapshot();
+      if (!SKIP_SNAPSHOTS) expect(content).toMatchSnapshot();
     });
 
     it("should generate astro template with solidjs", () => {
@@ -627,7 +627,7 @@ describe("getScaffoldContent", () => {
           ],
         },
       });
-      if (!SKIP_SNAPHOTS) expect(content).toMatchSnapshot();
+      if (!SKIP_SNAPSHOTS) expect(content).toMatchSnapshot();
     });
 
     it("should generate astro template with solidjs and tailwindcss", () => {
@@ -672,7 +672,7 @@ describe("getScaffoldContent", () => {
           ],
         },
       });
-      if (!SKIP_SNAPHOTS) expect(content).toMatchSnapshot();
+      if (!SKIP_SNAPSHOTS) expect(content).toMatchSnapshot();
     });
   });
 });
