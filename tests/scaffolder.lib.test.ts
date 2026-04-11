@@ -57,6 +57,10 @@ export default defineConfig({
   packagejson: `{
   "name": "",
   "version": "0.0.0",
+  "license": "MIT",
+  "files": [
+    "dist"
+  ],
   "type": "module",
   "scripts": {
     "test": "bun test",

@@ -13,6 +13,8 @@ interface PackageJson {
   name?: string;
   private?: boolean;
   version?: string;
+  license?: "MIT";
+  files?: string[];
   type: "module";
   imports?: PackageJsonImports;
   scripts: PackageJsonScripts;
@@ -80,6 +82,8 @@ function generatePackageJson(config: ResolvedConfig): PackageJson {
       if (features.includes("tsdown")) {
         packageJson.name = "";
         packageJson.version = "0.0.0";
+        packageJson.license = "MIT";
+        packageJson.files = ["dist"];
         packageJson.scripts["build"] = "tsdown";
         packageJson.scripts["prepublishOnly"] = "bun run build";
       } else {
@@ -106,6 +110,8 @@ function serializePackageJson(pkg: PackageJson): string {
     "name",
     "private",
     "version",
+    "license",
+    "files",
     "type",
     "imports",
     "scripts",
@@ -117,6 +123,10 @@ function serializePackageJson(pkg: PackageJson): string {
     if (value === undefined) continue;
     if (typeof value !== "object") {
       parts.push(`  "${key}": ${JSON.stringify(value)}`);
+      continue;
+    }
+    if (Array.isArray(value)) {
+      parts.push(`  "${key}": ${JSON.stringify(value, null, 2)}`);
       continue;
     }
     let obj = value;
