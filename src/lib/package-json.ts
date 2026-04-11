@@ -1,4 +1,5 @@
 import type { ResolvedConfig, Template } from "./resolver";
+import { sortKeys, sortKeysSpecificOrder } from "./sort-keys";
 
 interface PackageJsonImports {
   [key: string]: string;
@@ -11,7 +12,10 @@ interface PackageJsonScripts {
 interface PackageJson {
   name?: string;
   private?: boolean;
-  type: string;
+  version?: string;
+  license?: "MIT";
+  files?: string[];
+  type: "module";
   imports?: PackageJsonImports;
   scripts: PackageJsonScripts;
 }
@@ -24,18 +28,25 @@ const ASTRO_SCRIPTS: PackageJsonScripts = {
   deploy: "wrangler deploy",
 };
 
-const TEMPLATE_SCRIPTS: Record<Template, PackageJsonScripts> = {
-  default: { test: "bun test" },
-  executable: { test: "bun test" },
-  lib: { test: "bun test" },
+const EXECUTABLE_SCRIPTS: PackageJsonScripts = {
+  test: "bun test",
+  lint: "oxlint",
+  format: "oxfmt",
+  dev: "NODE_ENV=development bun run ./src/index.ts",
+  build:
+    "NODE_ENV=production bun build --minify --compile ./src/index.ts --outfile=dist/bot --target=bun-linux-arm64",
+};
+
+const TEMPLATE_SCRIPTS: Partial<Record<Template, PackageJsonScripts>> = {
   astro: ASTRO_SCRIPTS,
+  executable: EXECUTABLE_SCRIPTS,
 };
 
 function generatePackageJson(config: ResolvedConfig): PackageJson {
   const template = config.template;
   const features = config.features ?? [];
 
-  const templateScripts = TEMPLATE_SCRIPTS[template];
+  const templateScripts = TEMPLATE_SCRIPTS[template] ?? { test: "bun test" };
   const scripts: PackageJsonScripts = {};
   for (const [key, value] of Object.entries(templateScripts)) {
     scripts[key] = value;
@@ -70,6 +81,9 @@ function generatePackageJson(config: ResolvedConfig): PackageJson {
 
       if (features.includes("tsdown")) {
         packageJson.name = "";
+        packageJson.version = "0.0.0";
+        packageJson.license = "MIT";
+        packageJson.files = ["dist"];
         packageJson.scripts["build"] = "tsdown";
         packageJson.scripts["prepublishOnly"] = "bun run build";
       } else {
@@ -78,20 +92,30 @@ function generatePackageJson(config: ResolvedConfig): PackageJson {
     }
   }
 
+  packageJson.scripts = sortKeysSpecificOrder(packageJson.scripts, [
+    "test",
+    "lint",
+    "format",
+    "dev",
+    "build",
+    "deploy",
+    "prepublishOnly",
+  ]);
+
   return packageJson;
 }
 
-function sortKeys<T>(obj: Record<string, T>) {
-  return Object.keys(obj)
-    .toSorted()
-    .reduce<Record<string, T>>((acc, k) => {
-      acc[k] = obj[k] as T;
-      return acc;
-    }, {});
-}
-
 function serializePackageJson(pkg: PackageJson): string {
-  const keys = ["name", "private", "type", "imports", "scripts"] as const;
+  const keys = [
+    "name",
+    "private",
+    "version",
+    "license",
+    "files",
+    "type",
+    "imports",
+    "scripts",
+  ] as const satisfies (keyof PackageJson)[];
   const parts: string[] = [];
 
   for (const key of keys) {
@@ -99,6 +123,17 @@ function serializePackageJson(pkg: PackageJson): string {
     if (value === undefined) continue;
     if (typeof value !== "object") {
       parts.push(`  "${key}": ${JSON.stringify(value)}`);
+      continue;
+    }
+    if (Array.isArray(value)) {
+      const serialized = JSON.stringify(value, null, 2);
+      const lines = serialized.split("\n");
+      const body = lines.slice(1, -1).join("\n");
+      const indentedBody = body
+        .split("\n")
+        .map((line) => `  ${line}`)
+        .join("\n");
+      parts.push(`  "${key}": [\n${indentedBody}\n  ]`);
       continue;
     }
     let obj = value;

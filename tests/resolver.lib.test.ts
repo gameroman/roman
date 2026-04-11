@@ -33,6 +33,13 @@ describe("resolveConfig", () => {
         features: ["oxfmt", "oxlint", "tsdown", "tsgolint"],
       });
     });
+
+    it("should resolve tsdown", () => {
+      expect(resolveConfig(["tsdown"])).toEqual({
+        template: "lib",
+        features: ["oxfmt", "oxlint", "tsdown", "tsgolint"],
+      });
+    });
   });
 
   describe("executable template", () => {
@@ -40,6 +47,20 @@ describe("resolveConfig", () => {
       expect(resolveConfig(["exe"])).toEqual({
         template: "executable",
         features: ["oxfmt", "oxlint", "tsgolint"],
+      });
+    });
+
+    it("should resolve exe tg", () => {
+      expect(resolveConfig(["exe", "tg"])).toEqual({
+        template: "executable",
+        features: ["oxfmt", "oxlint", "telegram", "tsgolint"],
+      });
+    });
+
+    it("should resolve tg", () => {
+      expect(resolveConfig(["tg"])).toEqual({
+        template: "executable",
+        features: ["oxfmt", "oxlint", "telegram", "tsgolint"],
       });
     });
   });
@@ -54,6 +75,13 @@ describe("resolveConfig", () => {
 
     it("should resolve astro solid", () => {
       expect(resolveConfig(["astro", "solid"])).toEqual({
+        template: "astro",
+        features: ["biome", "solid", "tailwind", "wrangler"],
+      });
+    });
+
+    it("should resolve solid", () => {
+      expect(resolveConfig(["solid"])).toEqual({
         template: "astro",
         features: ["biome", "solid", "tailwind", "wrangler"],
       });

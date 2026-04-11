@@ -56,6 +56,11 @@ export default defineConfig({
 `,
   packagejson: `{
   "name": "",
+  "version": "0.0.0",
+  "license": "MIT",
+  "files": [
+    "dist"
+  ],
   "type": "module",
   "scripts": {
     "test": "bun test",
@@ -65,6 +70,55 @@ export default defineConfig({
     "prepublishOnly": "bun run build"
   }
 }
+`,
+} as const;
+
+const exeFiles = {
+  packagejson: `{
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "bun test",
+    "lint": "oxlint",
+    "format": "oxfmt",
+    "dev": "NODE_ENV=development bun run ./src/index.ts",
+    "build": "NODE_ENV=production bun build --minify --compile ./src/index.ts --outfile=dist/bot --target=bun-linux-arm64"
+  }
+}
+`,
+  tgindex: `import { run } from "@grammyjs/runner";
+import { Bot, GrammyError } from "grammy";
+
+const TOKEN = process.env["TOKEN"];
+if (!TOKEN) throw new Error("Missing TOKEN env variable");
+
+const bot = new Bot(TOKEN);
+
+const m = bot.on("message");
+
+m.command("start", (ctx) => {
+  return ctx.reply("/help");
+});
+
+void bot.api.setMyCommands([
+  { command: "start", description: "Start" },
+  { command: "help", description: "Help" },
+]);
+
+bot.catch(({ ctx, error }) => {
+  console.error(\`Error while handling update \${ctx.update.update_id}:\`);
+  if (error instanceof GrammyError) {
+    console.error("Error in request:", error.description);
+  } else {
+    console.error("Unknown error:", error);
+  }
+});
+
+const runner = run(bot);
+const stopRunner = () => runner.isRunning() && runner.stop();
+
+process.once("SIGINT", stopRunner);
+process.once("SIGTERM", stopRunner);
 `,
 } as const;
 
@@ -323,7 +377,7 @@ declare global {
   }
 }
 
-const SKIP_SNAPHOTS = !!process.env.SKIP_SNAPSHOTS;
+const SKIP_SNAPSHOTS = !!process.env.SKIP_SNAPSHOTS;
 
 describe("getScaffoldContent", () => {
   describe("default template", () => {
@@ -350,7 +404,7 @@ describe("getScaffoldContent", () => {
           ],
         },
       });
-      if (!SKIP_SNAPHOTS) expect(content).toMatchSnapshot();
+      if (!SKIP_SNAPSHOTS) expect(content).toMatchSnapshot();
     });
 
     it("should generate normal oxlint config without tsgolint feature", () => {
@@ -370,7 +424,7 @@ describe("getScaffoldContent", () => {
           dev: ["@gameroman/config", "oxfmt", "oxlint", "typescript"],
         },
       });
-      if (!SKIP_SNAPHOTS) expect(content).toMatchSnapshot();
+      if (!SKIP_SNAPSHOTS) expect(content).toMatchSnapshot();
     });
 
     it("should generate tsgolint oxlint config when only tsgolint feature is specified", () => {
@@ -396,7 +450,7 @@ describe("getScaffoldContent", () => {
           ],
         },
       });
-      if (!SKIP_SNAPHOTS) expect(content).toMatchSnapshot();
+      if (!SKIP_SNAPSHOTS) expect(content).toMatchSnapshot();
     });
   });
 
@@ -426,7 +480,63 @@ describe("getScaffoldContent", () => {
           ],
         },
       });
-      if (!SKIP_SNAPHOTS) expect(content).toMatchSnapshot();
+      if (!SKIP_SNAPSHOTS) expect(content).toMatchSnapshot();
+    });
+  });
+
+  describe("exe template", () => {
+    it("should generate basic files for exe template", () => {
+      const content = getScaffoldContent({
+        template: "executable",
+        features: ["oxfmt", "oxlint", "tsgolint"],
+      });
+      expect(content).toEqual({
+        files: [
+          { path: ".gitignore", content: defaultFiles.gitignore },
+          { path: "oxfmt.config.ts", content: defaultFiles.oxfmt },
+          { path: "oxlint.config.ts", content: defaultFiles.tsgolint },
+          { path: "package.json", content: exeFiles.packagejson },
+          { path: "tsconfig.json", content: defaultFiles.tsconfig },
+        ],
+        dependencies: {
+          dev: [
+            "@gameroman/config",
+            "oxfmt",
+            "oxlint",
+            "oxlint-tsgolint",
+            "typescript",
+          ],
+        },
+      });
+      if (!SKIP_SNAPSHOTS) expect(content).toMatchSnapshot();
+    });
+
+    it("should generate executable template with telegram", () => {
+      const content = getScaffoldContent({
+        template: "executable",
+        features: ["oxfmt", "oxlint", "telegram", "tsgolint"],
+      });
+      expect(content).toEqual({
+        files: [
+          { path: "src/index.ts", content: exeFiles.tgindex },
+          { path: ".gitignore", content: defaultFiles.gitignore },
+          { path: "oxfmt.config.ts", content: defaultFiles.oxfmt },
+          { path: "oxlint.config.ts", content: defaultFiles.tsgolint },
+          { path: "package.json", content: exeFiles.packagejson },
+          { path: "tsconfig.json", content: defaultFiles.tsconfig },
+        ],
+        dependencies: {
+          default: ["@grammyjs/runner", "grammy"],
+          dev: [
+            "@gameroman/config",
+            "oxfmt",
+            "oxlint",
+            "oxlint-tsgolint",
+            "typescript",
+          ],
+        },
+      });
+      if (!SKIP_SNAPSHOTS) expect(content).toMatchSnapshot();
     });
   });
 
@@ -455,7 +565,7 @@ describe("getScaffoldContent", () => {
           ],
         },
       });
-      if (!SKIP_SNAPHOTS) expect(content).toMatchSnapshot();
+      if (!SKIP_SNAPSHOTS) expect(content).toMatchSnapshot();
     });
 
     it("should generate astro template with tailwindcss", () => {
@@ -489,7 +599,7 @@ describe("getScaffoldContent", () => {
           ],
         },
       });
-      if (!SKIP_SNAPHOTS) expect(content).toMatchSnapshot();
+      if (!SKIP_SNAPSHOTS) expect(content).toMatchSnapshot();
     });
 
     it("should generate astro template with solidjs", () => {
@@ -517,7 +627,7 @@ describe("getScaffoldContent", () => {
           ],
         },
       });
-      if (!SKIP_SNAPHOTS) expect(content).toMatchSnapshot();
+      if (!SKIP_SNAPSHOTS) expect(content).toMatchSnapshot();
     });
 
     it("should generate astro template with solidjs and tailwindcss", () => {
@@ -562,7 +672,7 @@ describe("getScaffoldContent", () => {
           ],
         },
       });
-      if (!SKIP_SNAPHOTS) expect(content).toMatchSnapshot();
+      if (!SKIP_SNAPSHOTS) expect(content).toMatchSnapshot();
     });
   });
 });

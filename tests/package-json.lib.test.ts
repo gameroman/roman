@@ -67,7 +67,7 @@ describe("generatePackageJson", () => {
   });
 
   describe("executable template", () => {
-    it("should behave like default template", () => {
+    it("should generate executable scripts", () => {
       const pkg = generatePackageJson({
         template: "executable",
         features: ["oxlint", "oxfmt"],
@@ -76,6 +76,9 @@ describe("generatePackageJson", () => {
         test: "bun test",
         lint: "oxlint",
         format: "oxfmt",
+        dev: "NODE_ENV=development bun run ./src/index.ts",
+        build:
+          "NODE_ENV=production bun build --minify --compile ./src/index.ts --outfile=dist/bot --target=bun-linux-arm64",
       });
     });
   });

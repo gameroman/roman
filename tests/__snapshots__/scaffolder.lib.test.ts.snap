@@ -253,6 +253,11 @@ export default config;
       "content": 
 "{
   "name": "",
+  "version": "0.0.0",
+  "license": "MIT",
+  "files": [
+    "dist"
+  ],
   "type": "module",
   "scripts": {
     "test": "bun test",
@@ -289,6 +294,193 @@ export default defineConfig({
 "
 ,
       "path": "tsdown.config.ts",
+    },
+  ],
+}
+`;
+
+exports[`getScaffoldContent exe template should generate basic files for exe template 1`] = `
+{
+  "dependencies": {
+    "dev": [
+      "@gameroman/config",
+      "oxfmt",
+      "oxlint",
+      "oxlint-tsgolint",
+      "typescript",
+    ],
+  },
+  "files": [
+    {
+      "content": 
+"node_modules/
+
+dist/
+"
+,
+      "path": ".gitignore",
+    },
+    {
+      "content": 
+"import { config } from "@gameroman/config/oxfmt";
+
+export default config;
+"
+,
+      "path": "oxfmt.config.ts",
+    },
+    {
+      "content": 
+"import { config } from "@gameroman/config/oxlint/typeaware";
+
+export default config;
+"
+,
+      "path": "oxlint.config.ts",
+    },
+    {
+      "content": 
+"{
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "bun test",
+    "lint": "oxlint",
+    "format": "oxfmt",
+    "dev": "NODE_ENV=development bun run ./src/index.ts",
+    "build": "NODE_ENV=production bun build --minify --compile ./src/index.ts --outfile=dist/bot --target=bun-linux-arm64"
+  }
+}
+"
+,
+      "path": "package.json",
+    },
+    {
+      "content": 
+"{
+  "extends": "@gameroman/config/tsconfig",
+  "compilerOptions": {
+    "types": ["bun"]
+  }
+}
+"
+,
+      "path": "tsconfig.json",
+    },
+  ],
+}
+`;
+
+exports[`getScaffoldContent exe template should generate executable template with telegram 1`] = `
+{
+  "dependencies": {
+    "default": [
+      "@grammyjs/runner",
+      "grammy",
+    ],
+    "dev": [
+      "@gameroman/config",
+      "oxfmt",
+      "oxlint",
+      "oxlint-tsgolint",
+      "typescript",
+    ],
+  },
+  "files": [
+    {
+      "content": 
+"import { run } from "@grammyjs/runner";
+import { Bot, GrammyError } from "grammy";
+
+const TOKEN = process.env["TOKEN"];
+if (!TOKEN) throw new Error("Missing TOKEN env variable");
+
+const bot = new Bot(TOKEN);
+
+const m = bot.on("message");
+
+m.command("start", (ctx) => {
+  return ctx.reply("/help");
+});
+
+void bot.api.setMyCommands([
+  { command: "start", description: "Start" },
+  { command: "help", description: "Help" },
+]);
+
+bot.catch(({ ctx, error }) => {
+  console.error(\`Error while handling update \${ctx.update.update_id}:\`);
+  if (error instanceof GrammyError) {
+    console.error("Error in request:", error.description);
+  } else {
+    console.error("Unknown error:", error);
+  }
+});
+
+const runner = run(bot);
+const stopRunner = () => runner.isRunning() && runner.stop();
+
+process.once("SIGINT", stopRunner);
+process.once("SIGTERM", stopRunner);
+"
+,
+      "path": "src/index.ts",
+    },
+    {
+      "content": 
+"node_modules/
+
+dist/
+"
+,
+      "path": ".gitignore",
+    },
+    {
+      "content": 
+"import { config } from "@gameroman/config/oxfmt";
+
+export default config;
+"
+,
+      "path": "oxfmt.config.ts",
+    },
+    {
+      "content": 
+"import { config } from "@gameroman/config/oxlint/typeaware";
+
+export default config;
+"
+,
+      "path": "oxlint.config.ts",
+    },
+    {
+      "content": 
+"{
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "bun test",
+    "lint": "oxlint",
+    "format": "oxfmt",
+    "dev": "NODE_ENV=development bun run ./src/index.ts",
+    "build": "NODE_ENV=production bun build --minify --compile ./src/index.ts --outfile=dist/bot --target=bun-linux-arm64"
+  }
+}
+"
+,
+      "path": "package.json",
+    },
+    {
+      "content": 
+"{
+  "extends": "@gameroman/config/tsconfig",
+  "compilerOptions": {
+    "types": ["bun"]
+  }
+}
+"
+,
+      "path": "tsconfig.json",
     },
   ],
 }
