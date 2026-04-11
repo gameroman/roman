@@ -125,6 +125,17 @@ function serializePackageJson(pkg: PackageJson): string {
       parts.push(`  "${key}": ${JSON.stringify(value)}`);
       continue;
     }
+    if (Array.isArray(value)) {
+      const serialized = JSON.stringify(value, null, 2);
+      const lines = serialized.split("\n");
+      const body = lines.slice(1, -1).join("\n");
+      const indentedBody = body
+        .split("\n")
+        .map((line) => `  ${line}`)
+        .join("\n");
+      parts.push(`  "${key}": [\n${indentedBody}\n  ]`);
+      continue;
+    }
     let obj = value;
     if (key === "imports") {
       obj = sortKeys(obj);
